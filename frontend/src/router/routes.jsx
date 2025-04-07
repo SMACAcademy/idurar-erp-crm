@@ -26,8 +26,8 @@ const PaymentMode = lazy(() => import('@/pages/PaymentMode'));
 const Taxes = lazy(() => import('@/pages/Taxes'));
 
 const Profile = lazy(() => import('@/pages/Profile'));
-
 const About = lazy(() => import('@/pages/About'));
+import QueryManagement from '@/pages/QueryManagement';
 
 let routes = {
   expense: [],
@@ -126,6 +126,10 @@ let routes = {
     {
       path: '*',
       element: <NotFound />,
+    },
+    {
+      path: '/query',
+      element: <QueryManagement />,
     },
   ],
 };

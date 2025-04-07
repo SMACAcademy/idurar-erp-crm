@@ -18,6 +18,7 @@ import useLanguage from '@/locale/useLanguage';
 import calculate from '@/utils/calculate';
 import { useSelector } from 'react-redux';
 import SelectAsync from '@/components/SelectAsync';
+import request from '@/request/request';
 
 export default function InvoiceForm({ subTotal = 0, current = null }) {
   const { last_invoice_number } = useSelector(selectFinanceSettings);
@@ -38,9 +39,49 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
   const [taxTotal, setTaxTotal] = useState(0);
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [lastNumber, setLastNumber] = useState(() => last_invoice_number + 1);
+  const [geminiSummary, setGeminiSummary] = useState('');
+  const [form] = Form.useForm();
 
   const handelTaxChange = (value) => {
     setTaxRate(value / 100);
+  };
+
+  const generateGeminiSummary = async () => {
+    const apiUrl = 'url'; // Replace with your actual API URL
+      const apiKey = 'API_KEY'; // Replace with your actual API key
+
+    const data = {
+      model: 'accounts/perplexity/models/r1-1776',
+      messages: [
+        {
+          role: 'user',
+          content: `Summarize the following notes: ${form.getFieldValue('items').map(item => item.notes).join(' ')}`,
+        },
+      ],
+      max_tokens: 500,
+      stream: false,
+    };
+
+    try {
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate summary');
+      }
+
+      const result = await response.json();
+      setGeminiSummary(result.choices[0].message.content);
+    } catch (error) {
+      console.error('Error generating Gemini summary:', error);
+      setGeminiSummary('Error generating summary');
+    }
   };
 
   useEffect(() => {
@@ -63,8 +104,21 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
     addField.current.click();
   }, []);
 
+  const onSubmit = async (values) => {
+    try {
+      const response = await request.post('/api/invoice/save', values);
+      if (response.status === 200) {
+        console.log('Invoice saved successfully:', response.data);
+      } else {
+        console.error('Failed to save invoice:', response);
+      }
+    } catch (error) {
+      console.error('Error saving invoice:', error);
+    }
+  };
+
   return (
-    <>
+    <Form onFinish={onSubmit} form={form} layout="vertical" autoComplete="off" action={undefined}>
       <Row gutter={[12, 0]}>
         <Col className="gutter-row" span={8}>
           <Form.Item
@@ -189,12 +243,21 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
         <Col className="gutter-row" span={5}>
           <p>{translate('Total')}</p>
         </Col>
+        <Col className="gutter-row" span={7}>
+          <p>{translate('Notes')}</p>
+        </Col>
       </Row>
       <Form.List name="items">
         {(fields, { add, remove }) => (
           <>
             {fields.map((field) => (
-              <ItemRow key={field.key} remove={remove} field={field} current={current}></ItemRow>
+              <ItemRow key={field.key} remove={remove} field={field} current={current}>
+                <Col className="gutter-row" span={7}>
+                  <Form.Item name={[field.name, 'notes']}>
+                    <Input placeholder="Notes" />
+                  </Form.Item>
+                </Col>
+              </ItemRow>
             ))}
             <Form.Item>
               <Button
@@ -211,6 +274,28 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
         )}
       </Form.List>
       <Divider dashed />
+      <Row gutter={[12, 12]}>
+        <Col span={24}>
+          <Form.Item>
+            <Button
+              type="primary"
+              onClick={() => {
+                console.log('Generate Gemini Summary button clicked');
+                generateGeminiSummary();
+              }}
+              icon={<PlusOutlined />}
+            >
+              {translate('Generate Gemini Summary')}
+            </Button>
+          </Form.Item>
+        </Col>
+      </Row>
+      <Row gutter={[12, 12]}>
+        <Col span={24}>
+          <p><strong>{translate('Gemini Summary')}:</strong></p>
+          <p>{geminiSummary || translate('No summary available')}</p>
+        </Col>
+      </Row>
       <div style={{ position: 'relative', width: ' 100%', float: 'right' }}>
         <Row gutter={[12, -5]}>
           <Col className="gutter-row" span={5}>
@@ -281,6 +366,6 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
           </Col>
         </Row>
       </div>
-    </>
+    </Form>
   );
 }

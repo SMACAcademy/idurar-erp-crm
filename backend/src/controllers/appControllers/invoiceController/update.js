@@ -71,6 +71,12 @@ const update = async (req, res) => {
     new: true, // return the new result instead of the old one
   }).exec();
 
+  const pdfContent = {
+    ...body,
+    geminiSummary: body.geminiSummary,
+  };
+  await custom.generatePDF(pdfContent, body['pdf']);
+
   // Returning successfull response
 
   return res.status(200).json({

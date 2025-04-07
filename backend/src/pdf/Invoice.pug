@@ -319,8 +319,12 @@ html
         
       .col.col-24
           .space     
+      .col.col-24
+          .space
+          h2 #{translate('Gemini Summary')}
+          p #{model.geminiSummary || translate('No summary available')}
       footer.footer-invoice
         //- | Invoice was created on a computer and is valid without the signature and seal.
-          
 
-   
+
+

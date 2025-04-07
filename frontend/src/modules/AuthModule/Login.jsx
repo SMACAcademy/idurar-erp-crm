@@ -1,0 +1,1 @@
+      console.log('Auth token stored in localStorage:', token);

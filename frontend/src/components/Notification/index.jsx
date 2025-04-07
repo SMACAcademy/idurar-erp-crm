@@ -4,7 +4,7 @@ import { Button } from 'antd';
 
 const Notifications = () => {
   const [notifications, setNotifications] = React.useState([
-    { id: 1, text: 'First notificationnnnnnnnnnnnnnnnn' },
+    { id: 1, text: 'First notification' },
     { id: 2, text: 'Second notification' },
     { id: 3, text: 'Third ' },
     { id: 4, text: 'Fourth notification' },
@@ -17,6 +17,8 @@ const Notifications = () => {
     setNotifications(updatedNotifications);
   };
 
+  const uniqueId = () => Math.random().toString(36).substr(2, 9);
+
   return (
     <div className="notifications whiteBox shadow">
       <div className="pad20">
@@ -28,7 +30,7 @@ const Notifications = () => {
       <div className="line"></div>
       <div className="notif-list">
         {notifications.map((notification) => (
-          <div href="/" key={notification.id} className="notification">
+          <div href="/" key={`${notification.id}-${uniqueId()}`} className="notification">
             <Button type="text" className="notif-btn">
               <span>{notification.text}</span>
             </Button>
