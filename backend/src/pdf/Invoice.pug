@@ -255,6 +255,23 @@ html
         padding: 20px 0;
         text-align: center;
       }
+      .summary-section {
+        margin-top: 20px;
+        padding: 15px;
+        border-top: 1px solid #c2e0f2;
+      }
+      .summary-title {
+        color: #52008c;
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .summary-content {
+        font-size: 12px;
+        line-height: 1.5;
+        color: #222;
+        white-space: pre-line;
+      }
  
   body
     
@@ -328,5 +345,9 @@ html
       footer.footer-invoice
         //- | Invoice was created on a computer and is valid without the signature and seal.
           
+      if summary
+        .summary-section
+          .summary-title Summary
+          .summary-content #{summary}
 
    
