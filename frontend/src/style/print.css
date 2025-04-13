@@ -1,0 +1,52 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  .readItem,
+  .readItem * {
+    visibility: visible;
+  }
+  
+  .readItem {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  
+  .summary-section {
+    page-break-inside: avoid;
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+  }
+  
+  .summary-section h3 {
+    color: #000;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .summary-section div {
+    color: #000;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  
+  /* Hide buttons in print view */
+  button {
+    display: none !important;
+  }
+  
+  /* Ensure proper page breaks */
+  .invoice-body {
+    page-break-inside: avoid;
+  }
+  
+  /* Adjust margins for printing */
+  @page {
+    margin: 1cm;
+  }
+} 

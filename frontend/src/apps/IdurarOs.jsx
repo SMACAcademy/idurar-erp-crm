@@ -6,22 +6,30 @@ import { AppContextProvider } from '@/context/appContext';
 import PageLoader from '@/components/PageLoader';
 import AuthRouter from '@/router/AuthRouter';
 import Localization from '@/locale/Localization';
-import { notification } from 'antd';
+import { notification, App } from 'antd';
 
 const ErpApp = lazy(() => import('./ErpApp'));
 
 const DefaultApp = () => (
   <Localization>
     <AppContextProvider>
-      <Suspense fallback={<PageLoader />}>
-        <ErpApp />
-      </Suspense>
+      <App>
+        <Suspense fallback={<PageLoader />}>
+          <ErpApp />
+        </Suspense>
+      </App>
     </AppContextProvider>
   </Localization>
 );
 
 export default function IdurarOs() {
-  const { isLoggedIn } = useSelector(selectAuth);
+  const { isLoggedIn, isLoading } = useSelector(selectAuth);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    // Set initialized to true after component mounts
+    setIsInitialized(true);
+  }, []);
 
   console.log(
     '🚀 Welcome to IDURAR ERP CRM! Did you know that we also offer commercial customization services? Contact us at hello@idurarapp.com for more information.'
@@ -61,13 +69,20 @@ export default function IdurarOs() {
   //   };
   // }, [navigator.onLine]);
 
-  if (!isLoggedIn)
+  // Show loading state while checking authentication
+  if (!isInitialized || isLoading) {
+    return <PageLoader />;
+  }
+
+  // Show auth router if not logged in
+  if (!isLoggedIn) {
     return (
       <Localization>
         <AuthRouter />
       </Localization>
     );
-  else {
-    return <DefaultApp />;
   }
+
+  // Show main app if logged in
+  return <DefaultApp />;
 }
