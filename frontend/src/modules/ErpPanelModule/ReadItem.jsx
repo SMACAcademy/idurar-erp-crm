@@ -33,6 +33,11 @@ const Item = ({ item, currentErp }) => {
           <strong>{item.itemName}</strong>
         </p>
         <p>{item.description}</p>
+        {item.note && (
+          <p style={{ marginTop: 5, color: '#666', fontStyle: 'italic' }}>
+            <strong>Note:</strong> {item.note}
+          </p>
+        )}
       </Col>
       <Col className="gutter-row" span={4}>
         <p
@@ -235,10 +240,10 @@ export default function ReadItem({ config, selectedItem }) {
         </Row>
       </PageHeader>
       <Divider dashed />
-      <Descriptions title={`Client : ${currentErp.client.name}`}>
-        <Descriptions.Item label={translate('Address')}>{client.address}</Descriptions.Item>
-        <Descriptions.Item label={translate('email')}>{client.email}</Descriptions.Item>
-        <Descriptions.Item label={translate('Phone')}>{client.phone}</Descriptions.Item>
+      <Descriptions title={`Client : ${currentErp?.client?.name || 'N/A'}`}>
+        <Descriptions.Item label={translate('Address')}>{client?.address || 'N/A'}</Descriptions.Item>
+        <Descriptions.Item label={translate('email')}>{client?.email || 'N/A'}</Descriptions.Item>
+        <Descriptions.Item label={translate('Phone')}>{client?.phone || 'N/A'}</Descriptions.Item>
       </Descriptions>
       <Divider />
       <Row gutter={[12, 0]}>
