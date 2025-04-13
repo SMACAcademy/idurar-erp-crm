@@ -65,7 +65,7 @@ export default function CreateItem({ config, CreateForm }) {
           }
           if (item.quantity && item.price) {
             let total = calculate.multiply(item['quantity'], item['price']);
-            //sub total
+            //sub total 
             subTotal = calculate.add(subTotal, total);
           }
         }
