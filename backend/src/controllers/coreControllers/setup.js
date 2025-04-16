@@ -3,17 +3,15 @@ require('dotenv').config({ path: '.env.local' });
 const { globSync } = require('glob');
 const fs = require('fs');
 const { generate: uniqueId } = require('shortid');
+const Joi = require('joi');
 
-const mongoose = require('mongoose');
+const Admin = require('../../models/coreModels/Admin');
+const AdminPassword = require('../../models/coreModels/AdminPassword');
+const Setting = require('../../models/coreModels/Setting');
+const PaymentMode = require('../../models/appModels/PaymentMode');
+const Taxes = require('../../models/appModels/Taxes');
 
 const setup = async (req, res) => {
-  const Admin = mongoose.model('Admin');
-  const AdminPassword = mongoose.model('AdminPassword');
-  const Setting = mongoose.model('Setting');
-
-  const PaymentMode = mongoose.model('PaymentMode');
-  const Taxes = mongoose.model('Taxes');
-
   const newAdminPassword = new AdminPassword();
 
   const { name, email, password, language, timezone, country, config = {} } = req.body;

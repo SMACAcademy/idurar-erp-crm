@@ -111,21 +111,34 @@ export const settingsAction = {
   list:
     ({ entity }) =>
     async (dispatch) => {
-      dispatch({
-        type: actionTypes.REQUEST_LOADING,
-      });
-
-      let data = await request.listAll({ entity });
-
-      if (data.success === true) {
-        const payload = dispatchSettingsData(data.result);
-        window.localStorage.setItem('settings', JSON.stringify(dispatchSettingsData(data.result)));
-
+      try {
+        console.log('Fetching settings...');
         dispatch({
-          type: actionTypes.REQUEST_SUCCESS,
-          payload,
+          type: actionTypes.REQUEST_LOADING,
         });
-      } else {
+
+        const data = await request.listAll({ entity });
+        console.log('Settings response:', data);
+
+        if (data.success === true) {
+          const payload = dispatchSettingsData(data.result);
+          console.log('Processed settings:', payload);
+
+          // Store settings in localStorage
+          window.localStorage.setItem('settings', JSON.stringify(payload));
+
+          dispatch({
+            type: actionTypes.REQUEST_SUCCESS,
+            payload,
+          });
+        } else {
+          console.error('Settings fetch failed:', data);
+          dispatch({
+            type: actionTypes.REQUEST_FAILED,
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error);
         dispatch({
           type: actionTypes.REQUEST_FAILED,
         });

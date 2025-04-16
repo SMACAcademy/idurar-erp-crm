@@ -26,11 +26,13 @@ export function contextReducer(state, action) {
       return {
         ...state,
         isPanelClose: false,
+        isBoxCollapsed: false,
       };
     case actionTypes.CLOSE_PANEL:
       return {
         ...state,
         isPanelClose: true,
+        isBoxCollapsed: true,
       };
     case actionTypes.COLLAPSE_PANEL:
       return {
@@ -40,12 +42,12 @@ export function contextReducer(state, action) {
     case actionTypes.OPEN_BOX:
       return {
         ...state,
-        isBoxCollapsed: true,
+        isBoxCollapsed: false,
       };
     case actionTypes.CLOSE_BOX:
       return {
         ...state,
-        isBoxCollapsed: false,
+        isBoxCollapsed: true,
       };
     case actionTypes.COLLAPSE_BOX:
       return {
@@ -55,6 +57,8 @@ export function contextReducer(state, action) {
     case actionTypes.OPEN_READ_BOX:
       return {
         ...state,
+        isPanelClose: false,
+        isBoxCollapsed: false,
         isAdvancedBoxOpen: false,
         isEditBoxOpen: false,
         isReadBoxOpen: true,

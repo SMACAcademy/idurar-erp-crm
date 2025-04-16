@@ -29,7 +29,7 @@ function AddNewItem({ config }) {
   const { ADD_NEW_ENTITY, entity } = config;
 
   const handleClick = () => {
-    navigate(`/${entity.toLowerCase()}/create`);
+    navigate(`/${entity}/create`);
   };
 
   return (
@@ -52,45 +52,20 @@ export default function DataTable({ config, extra = [] }) {
   const { erpContextAction } = useErpContext();
   const { modal } = erpContextAction;
 
-  const items = [
-    {
-      label: translate('Show'),
-      key: 'read',
-      icon: <EyeOutlined />,
-    },
-    {
-      label: translate('Edit'),
-      key: 'edit',
-      icon: <EditOutlined />,
-    },
-    {
-      label: translate('Download'),
-      key: 'download',
-      icon: <FilePdfOutlined />,
-    },
-    ...extra,
-    {
-      type: 'divider',
-    },
-
-    {
-      label: translate('Delete'),
-      key: 'delete',
-      icon: <DeleteOutlined />,
-    },
-  ];
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleRead = (record) => {
     dispatch(erp.currentItem({ data: record }));
-    navigate(`/${entity}/read/${record._id}`);
+    navigate(`/query/read/${record._id}`);
   };
+
   const handleEdit = (record) => {
     const data = { ...record };
     dispatch(erp.currentAction({ actionType: 'update', data }));
-    navigate(`/${entity}/update/${record._id}`);
+    navigate(`/query/update/${record._id}`);
   };
+
   const handleDownload = (record) => {
     window.open(`${DOWNLOAD_BASE_URL}${entity}/${entity}-${record._id}.pdf`, '_blank');
   };
@@ -104,6 +79,28 @@ export default function DataTable({ config, extra = [] }) {
     dispatch(erp.currentItem({ data: record }));
     navigate(`/invoice/pay/${record._id}`);
   };
+
+  const items = [
+    {
+      label: translate('Show'),
+      key: 'read',
+      icon: <EyeOutlined />,
+    },
+    {
+      label: translate('Download'),
+      key: 'download',
+      icon: <FilePdfOutlined />,
+    },
+    ...extra,
+    {
+      type: 'divider',
+    },
+    {
+      label: translate('Delete'),
+      key: 'delete',
+      icon: <DeleteOutlined />,
+    },
+  ];
 
   dataTableColumns = [
     ...dataTableColumns,
@@ -135,7 +132,6 @@ export default function DataTable({ config, extra = [] }) {
                 default:
                   break;
               }
-              // else if (key === '2')handleCloseTask
             },
           }}
           trigger={['click']}
@@ -148,8 +144,6 @@ export default function DataTable({ config, extra = [] }) {
       ),
     },
   ];
-
-  const dispatch = useDispatch();
 
   const handelDataTableLoad = (pagination) => {
     const options = { page: pagination.current || 1, items: pagination.pageSize || 10 };
@@ -187,9 +181,6 @@ export default function DataTable({ config, extra = [] }) {
             displayLabels={['name']}
             searchFields={'name'}
             onChange={filterTable}
-            // redirectLabel={'Add New Client'}
-            // withRedirect
-            // urlToRedirect={'/customer'}
           />,
           <Button onClick={handelDataTableLoad} key={`${uniqueId()}`} icon={<RedoOutlined />}>
             {translate('Refresh')}
@@ -200,17 +191,16 @@ export default function DataTable({ config, extra = [] }) {
         style={{
           padding: '20px 0px',
         }}
-      ></PageHeader>
-
-      <Table
-        columns={dataTableColumns}
-        rowKey={(item) => item._id}
-        dataSource={dataSource}
-        pagination={pagination}
-        loading={listIsLoading}
-        onChange={handelDataTableLoad}
-        scroll={{ x: true }}
-      />
+      >
+        <Table
+          rowKey="_id"
+          columns={dataTableColumns}
+          dataSource={dataSource}
+          pagination={pagination}
+          loading={listIsLoading}
+          onChange={handelDataTableLoad}
+        />
+      </PageHeader>
     </>
   );
 }

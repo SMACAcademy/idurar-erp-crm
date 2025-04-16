@@ -9,7 +9,6 @@ const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Customer = lazy(() => import('@/pages/Customer'));
 const Invoice = lazy(() => import('@/pages/Invoice'));
 const InvoiceCreate = lazy(() => import('@/pages/Invoice/InvoiceCreate'));
-
 const InvoiceRead = lazy(() => import('@/pages/Invoice/InvoiceRead'));
 const InvoiceUpdate = lazy(() => import('@/pages/Invoice/InvoiceUpdate'));
 const InvoiceRecordPayment = lazy(() => import('@/pages/Invoice/InvoiceRecordPayment'));
@@ -20,14 +19,14 @@ const QuoteUpdate = lazy(() => import('@/pages/Quote/QuoteUpdate'));
 const Payment = lazy(() => import('@/pages/Payment/index'));
 const PaymentRead = lazy(() => import('@/pages/Payment/PaymentRead'));
 const PaymentUpdate = lazy(() => import('@/pages/Payment/PaymentUpdate'));
-
 const Settings = lazy(() => import('@/pages/Settings/Settings'));
 const PaymentMode = lazy(() => import('@/pages/PaymentMode'));
 const Taxes = lazy(() => import('@/pages/Taxes'));
-
 const Profile = lazy(() => import('@/pages/Profile'));
-
 const About = lazy(() => import('@/pages/About'));
+const Query = lazy(() => import('@/pages/Query'));
+const QueryCreate = lazy(() => import('@/modules/QueryModule/CreateQueryModule'));
+const QueryRead = lazy(() => import('@/pages/Query/QueryRead'));
 
 let routes = {
   expense: [],
@@ -52,7 +51,6 @@ let routes = {
       path: '/customer',
       element: <Customer />,
     },
-
     {
       path: '/invoice',
       element: <Invoice />,
@@ -101,7 +99,6 @@ let routes = {
       path: '/payment/update/:id',
       element: <PaymentUpdate />,
     },
-
     {
       path: '/settings',
       element: <Settings />,
@@ -118,10 +115,21 @@ let routes = {
       path: '/taxes',
       element: <Taxes />,
     },
-
     {
       path: '/profile',
       element: <Profile />,
+    },
+    {
+      path: '/query',
+      element: <Query />,
+    },
+    {
+      path: '/query/create',
+      element: <QueryCreate />,
+    },
+    {
+      path: '/query/read/:id',
+      element: <QueryRead />,
     },
     {
       path: '*',

@@ -24,17 +24,28 @@ const SelectAsync = ({
 
   const navigate = useNavigate();
 
-  const asyncList = () => {
-    return request.list({ entity });
+  const asyncList = async () => {
+    if (entity === 'client') {
+      const response = await request.list({ entity: 'client' });
+      return response;
+    }
+    const response = await request.list({ entity });
+    return response;
   };
-  const { result, isLoading: fetchIsLoading, isSuccess } = useFetch(asyncList);
+
+  const { result, isLoading: fetchIsLoading, isSuccess, error } = useFetch(asyncList);
+
   useEffect(() => {
-    isSuccess && setOptions(result);
-  }, [isSuccess]);
+    if (isSuccess && result) {
+      const data = Array.isArray(result) ? result : (result.result || []);
+      setOptions(data);
+    }
+  }, [isSuccess, result, error]);
 
   const labels = (optionField) => {
-    return displayLabels.map((x) => optionField[x]).join(' ');
+    return optionField.name || optionField[displayLabels[0]];
   };
+
   useEffect(() => {
     if (value !== undefined) {
       const val = value?.[outputValue] ?? value;
@@ -55,22 +66,15 @@ const SelectAsync = ({
 
   const optionsList = () => {
     const list = [];
-
-    // if (selectOptions.length === 0 && withRedirect) {
-    //   const value = 'redirectURL';
-    //   const label = `+ ${translate(redirectLabel)}`;
-    //   list.push({ value, label });
-    // }
-    selectOptions.map((optionField) => {
-      const value = optionField[outputValue] ?? optionField;
+    selectOptions.forEach((optionField) => {
+      const value = optionField._id || optionField[outputValue] || optionField;
       const label = labels(optionField);
-      const currentColor = optionField[outputValue]?.color ?? optionField?.color;
-      const labelColor = color.find((x) => x.color === currentColor);
-      list.push({ value, label, color: labelColor?.color });
+      list.push({ value, label });
     });
-
     return list;
   };
+
+  const options = optionsList();
 
   return (
     <Select
@@ -79,16 +83,17 @@ const SelectAsync = ({
       value={currentValue}
       onChange={handleSelectChange}
       placeholder={placeholder}
+      showSearch
+      optionFilterProp="children"
+      filterOption={(input, option) =>
+        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      }
     >
-      {optionsList()?.map((option) => {
-        return (
-          <Select.Option key={`${uniqueId()}`} value={option.value}>
-            <Tag bordered={false} color={option.color}>
-              {option.label}
-            </Tag>
-          </Select.Option>
-        );
-      })}
+      {options?.map((option) => (
+        <Select.Option key={`${uniqueId()}`} value={option.value}>
+          {option.label}
+        </Select.Option>
+      ))}
       {withRedirect && (
         <Select.Option value={'redirectURL'}>{`+ ` + translate(redirectLabel)}</Select.Option>
       )}
