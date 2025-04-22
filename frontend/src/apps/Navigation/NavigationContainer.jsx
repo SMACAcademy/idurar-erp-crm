@@ -26,6 +26,7 @@ import {
   FilterOutlined,
   WalletOutlined,
   ReconciliationOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -59,7 +60,6 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <CustomerServiceOutlined />,
       label: <Link to={'/customer'}>{translate('customers')}</Link>,
     },
-
     {
       key: 'invoice',
       icon: <ContainerOutlined />,
@@ -75,7 +75,11 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <CreditCardOutlined />,
       label: <Link to={'/payment'}>{translate('payments')}</Link>,
     },
-
+    {
+      key: 'query',
+      icon: <QuestionCircleOutlined />,
+      label: <Link to={'/query'}>{translate('queries')}</Link>,
+    },
     {
       key: 'paymentMode',
       label: <Link to={'/payment/mode'}>{translate('payments_mode')}</Link>,

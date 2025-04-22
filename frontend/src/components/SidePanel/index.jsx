@@ -47,11 +47,11 @@ export default function SidePanel({ config, topContent, bottomContent, fixHeader
   }, [isPanelClose]);
 
   const collapsePanel = () => {
-    panel.collapse();
+    panel.close();
   };
 
   const collapsePanelBox = () => {
-    collapsedBox.collapse();
+    collapsedBox.close();
   };
 
   return (
@@ -61,6 +61,7 @@ export default function SidePanel({ config, topContent, bottomContent, fixHeader
       onClose={collapsePanel}
       open={!isPanelClose}
       width={450}
+      maskClosable={false}
     >
       <div
         className="sidePanelContent"
@@ -76,7 +77,7 @@ export default function SidePanel({ config, topContent, bottomContent, fixHeader
           onCollapse={collapsePanelBox}
           topContent={topContent}
           bottomContent={bottomContent}
-        ></CollapseBox>
+        />
       </div>
     </Drawer>
     // <Sider

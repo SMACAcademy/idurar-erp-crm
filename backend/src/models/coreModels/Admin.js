@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+console.log('Loading Admin model...');
+
 const adminSchema = new Schema({
   removed: {
     type: Boolean,
@@ -34,4 +36,8 @@ const adminSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('Admin', adminSchema);
+// Register the model
+const Admin = mongoose.model('Admin', adminSchema);
+console.log('Admin model registered:', mongoose.models.Admin ? 'Yes' : 'No');
+
+module.exports = Admin;

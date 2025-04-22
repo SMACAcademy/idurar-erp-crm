@@ -1,101 +1,88 @@
-<div align="center">
-    <a href="https://www.idurarapp.com/">
-  <img src="https://avatars.githubusercontent.com/u/50052356?s=200&v=4" width="128px" />
-    </a>
-    <h1>Open Source ERP / CRM Accounting Invoice Quote</h1>
-    <p align="center">
-        <p>IDURAR ERP CRM | Simple To Use</p>
-    </p>
-    
 
+## Query Model
+
+The Query model (`Query.js`) defines the following fields:
+
+- `title`: String (required) - Title of the query
+- `customer`: Reference to Customer model
+- `status`: String enum ['pending', 'in_progress', 'resolved', 'closed'] - Current status of the query
+- `description`: String (required) - Detailed description of the query
+- `notes`: note objects containing:
+  - `content`: String (required) - Note content  
+- `createdBy`: Reference to Admin model
+
+## API Endpoints
+
+### List Queries
+- **GET** `/api/query/list` 
+  - Lists all queries with pagination
+  - Query Parameters:
+    - `page`: Page number (default: 1)
+    - `items`: Items per page (default: 10)
+  - Returns:
+    - List of queries with populated customer and admin information
+    - Pagination details (current page, total pages, total items)
+
+### Create Query
+- **POST** `/api/query`
+  - Creates a new query
+  - Required fields: title, description
+  - Optional fields: customer, status
+
+### Get Single Query
+- **GET** `/api/query/:id`
+  - Retrieves a single query by ID
+  - Returns full query details with populated references
+
+### Update Query
+- **PUT** `/api/query/:id`
+  - Updates an existing query
+ 
+
+### Delete Query
+- **DELETE** `/api/query/:id`
+  - deletes a query 
+
+### Notes Management
+- **POST** `/api/query/:id/notes`
+  - Adds a note to a query
+  - Required field: content
+- **DELETE** `/api/query/:id/notes/:noteId`
+  - Deletes a specific note from a query
+
+### Status Update
+- **PUT** `/api/query/:id/status`
+  - Updates the status of a query
+  - Status must be one of: pending, in_progress, resolved, closed
+
+## Authentication
+
+All endpoints require authentication via JWT token. The token should be included in the request header as:
 ```
- Give a Star ⭐️ & Fork to this project ... Happy coding! 🤩`
+Authorization: Bearer <token>
 ```
 
-IDURAR is Open Source ERP / CRM (Invoice / Quote / Accounting ) Based on Advanced Mern Stack (Node.js / Express.js / MongoDb / React.js ) with Ant Design (AntD) and Redux
+## Response Format
 
-</div>
+Successful responses follow this format:
+```json
+{
+  "success": true,
+  "result": [/* data */],
+  "pagination": {
+    "page": 1,
+    "pages": 5,
+    "total": 50
+  }
+}
+```
 
-**🚀 Self-hosted Entreprise Version** : [https://cloud.idurarapp.com](https://cloud.idurarapp.com)
-
-
-
-## Features :
-
-Invoice Management
-
-Payment Management
-
-Quote Management
-
-Customer Management
-
-Ant Design Framework(AntD) 🐜
-
-Based on Mern Stack (Node.js / Express.js / MongoDb / React.js ) 👨‍💻
-
-### May i can use IDURAR for Commercial use :
-
-- Yes You can use IDURAR for free for personal or Commercial use.
-
-## Our Sponsors
-
-  <a href="https://m.do.co/c/4ead8370b905?ref=idurarapp.com">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg" width="201px">
-  </a>
-
-#
-
-<img width="1403" alt="Open Source ERP CRM" src="https://github.com/idurar/idurar-erp-crm/assets/136928179/a6712286-7ca6-4822-8902-fb7523533ee8">
-
-## Free Open Source ERP / CRM App
-
-IDURAR is Open "Fair-Code" Source ERP / CRM (Invoice / Inventory / Accounting / HR) Based on Mern Stack (Node.js / Express.js / MongoDb / React.js ) with Ant Design (AntD) and Redux
+Error responses follow this format:
+```json
+{
+  "success": false,
+  "error": "Error message"
+}
+```
 
 
-## Getting started
-
-1.[Clone the repository](INSTALLATION-INSTRUCTIONS.md#step-1-clone-the-repository)
-
-2.[Create Your MongoDB Account and Database Cluster](INSTALLATION-INSTRUCTIONS.md#Step-2-Create-Your-MongoDB-Account-and-Database-Cluster)
-
-3.[Edit the Environment File](INSTALLATION-INSTRUCTIONS.md#Step-3-Edit-the-Environment-File)
-
-4.[Update MongoDB URI](INSTALLATION-INSTRUCTIONS.md#Step-4-Update-MongoDB-URI)
-
-5.[Install Backend Dependencies](INSTALLATION-INSTRUCTIONS.md#Step-5-Install-Backend-Dependencies)
-
-6.[Run Setup Script](INSTALLATION-INSTRUCTIONS.md#Step-6-Run-Setup-Script)
-
-7.[Run the Backend Server](INSTALLATION-INSTRUCTIONS.md#Step-7-Run-the-Backend-Server)
-
-8.[Install Frontend Dependencies](INSTALLATION-INSTRUCTIONS.md#Step-8-Install-Frontend-Dependencies)
-
-9.[Run the Frontend Server](INSTALLATION-INSTRUCTIONS.md#Step-9-Run-the-Frontend-Server)
-
-## Contributing
-
-1.[How to contribute](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#how-to-contribute)
-
-2.[Reporting issues](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#reporting-issues)
-
-3.[Working on issues ](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#working-on-issues)
-
-4.[Submitting pull requests](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#submitting-pull-requests)
-
-5.[Commit Guidelines](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#commit-guidelines)
-
-6.[Coding Guidelines](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#coding-guidelines)
-
-7.[Questions](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#questions)
-
-
-## Show your support
-
-Dont forget to give a ⭐️ to this project ... Happy coding!
-
-**🚀 Self-hosted Entreprise Version** : [https://cloud.idurarapp.com](https://cloud.idurarapp.com)
-
-## License
-
-IDURAR is Free Open Source Released under the GNU Affero General Public License v3.0.

@@ -44,6 +44,7 @@ const ContentBox = ({ children }) => {
         width: '100%',
         maxWidth: '100%',
         flex: 'none',
+        padding: '20px',
       }}
     >
       {children}
@@ -59,17 +60,16 @@ export default function CrudLayout({
   fixHeaderPanel,
 }) {
   return (
-    <>
-      <DefaultLayout>
+    <DefaultLayout>
+      <Layout style={{ minHeight: '100vh' }}>
+        <ContentBox>{children}</ContentBox>
         <SidePanel
           config={config}
           topContent={sidePanelTopContent}
           bottomContent={sidePanelBottomContent}
           fixHeaderPanel={fixHeaderPanel}
-        ></SidePanel>
-
-        <ContentBox> {children}</ContentBox>
-      </DefaultLayout>
-    </>
+        />
+      </Layout>
+    </DefaultLayout>
   );
 }

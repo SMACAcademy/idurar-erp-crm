@@ -92,7 +92,12 @@ export default function ItemRow({ field, remove, current = null }) {
           />
         </Form.Item>
       </Col>
-      <Col className="gutter-row" span={5}>
+      <Col className="gutter-row" span={3}>
+        <Form.Item name={[field.name, 'notes']}>
+          <Input placeholder="Notes" />
+        </Form.Item>
+      </Col>
+      <Col className="gutter-row" span={2}>
         <Form.Item name={[field.name, 'total']}>
           <Form.Item>
             <InputNumber

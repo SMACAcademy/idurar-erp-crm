@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   EyeOutlined,
@@ -9,7 +9,7 @@ import {
   ArrowRightOutlined,
   ArrowLeftOutlined,
 } from '@ant-design/icons';
-import { Dropdown, Table, Button, Input } from 'antd';
+import { Dropdown, Table, Button, Input, Select } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -30,7 +30,7 @@ function AddNewItem({ config }) {
 
   const handelClick = () => {
     panel.open();
-    collapsedBox.close();
+    collapsedBox.open();
   };
 
   return (
@@ -39,6 +39,7 @@ function AddNewItem({ config }) {
     </Button>
   );
 }
+
 export default function DataTable({ config, extra = [] }) {
   let { entity, dataTableColumns, DATATABLE_TITLE, fields, searchConfig } = config;
   const { crudContextAction } = useCrudContext();
@@ -46,6 +47,8 @@ export default function DataTable({ config, extra = [] }) {
   const translate = useLanguage();
   const { moneyFormatter } = useMoney();
   const { dateFormat } = useDate();
+  const [statusFilter, setStatusFilter] = useState('all');
+  const dispatch = useDispatch();
 
   const items = [
     {
@@ -72,8 +75,6 @@ export default function DataTable({ config, extra = [] }) {
 
   const handleRead = (record) => {
     dispatch(crud.currentItem({ data: record }));
-    panel.open();
-    collapsedBox.open();
     readBox.open();
   };
   function handleEdit(record) {
@@ -103,7 +104,7 @@ export default function DataTable({ config, extra = [] }) {
     dispatchColumns = [...dataTableColumns];
   }
 
-  dataTableColumns = [
+  const columns = [
     ...dispatchColumns,
     {
       title: '',
@@ -146,26 +147,33 @@ export default function DataTable({ config, extra = [] }) {
     },
   ];
 
-  const { result: listResult, isLoading: listIsLoading } = useSelector(selectListItems);
-
-  const { pagination, items: dataSource } = listResult;
-
-  const dispatch = useDispatch();
-
-  const handelDataTableLoad = useCallback((pagination) => {
-    const options = { page: pagination.current || 1, items: pagination.pageSize || 10 };
-    dispatch(crud.list({ entity, options }));
-  }, []);
+  const handelDataTableLoad = useCallback(
+    (pagination) => {
+      const options = {
+        page: pagination.current || 1,
+        items: pagination.pageSize || 10,
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+      };
+      dispatch(crud.list({ entity, options }));
+    },
+    [statusFilter, entity, dispatch]
+  );
 
   const filterTable = (e) => {
     const value = e.target.value;
-    const options = { q: value, fields: searchConfig?.searchFields || '' };
+    const options = {
+      q: value,
+      fields: searchConfig?.searchFields || '',
+      status: statusFilter !== 'all' ? statusFilter : undefined,
+    };
     dispatch(crud.list({ entity, options }));
   };
 
-  const dispatcher = () => {
-    dispatch(crud.list({ entity }));
-  };
+  const dispatcher = useCallback(() => {
+    dispatch(
+      crud.list({ entity, options: { status: statusFilter !== 'all' ? statusFilter : undefined } })
+    );
+  }, [entity, statusFilter, dispatch]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -173,7 +181,10 @@ export default function DataTable({ config, extra = [] }) {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [dispatcher]);
+
+  const { result: listResult, isLoading: listIsLoading } = useSelector(selectListItems);
+  const { pagination, items: dataSource } = listResult || { pagination: {}, items: [] };
 
   return (
     <>
@@ -183,16 +194,26 @@ export default function DataTable({ config, extra = [] }) {
         title={DATATABLE_TITLE}
         ghost={false}
         extra={[
+          <Select
+            key="statusFilter"
+            value={statusFilter}
+            onChange={setStatusFilter}
+            style={{ width: 120 }}
+          >
+            <Select.Option value="all">{translate('All Status')}</Select.Option>
+            <Select.Option value="open">{translate('Open')}</Select.Option>
+            <Select.Option value="in-progress">{translate('In Progress')}</Select.Option>
+            <Select.Option value="closed">{translate('Closed')}</Select.Option>
+          </Select>,
           <Input
             key={`searchFilterDataTable}`}
             onChange={filterTable}
             placeholder={translate('search')}
             allowClear
           />,
-          <Button onClick={handelDataTableLoad} key={`${uniqueId()}`} icon={<RedoOutlined />}>
+          <Button onClick={dispatcher} key={`${uniqueId()}`} icon={<RedoOutlined />}>
             {translate('Refresh')}
           </Button>,
-
           <AddNewItem key={`${uniqueId()}`} config={config} />,
         ]}
         style={{
@@ -201,13 +222,16 @@ export default function DataTable({ config, extra = [] }) {
       ></PageHeader>
 
       <Table
-        columns={dataTableColumns}
+        columns={columns}
         rowKey={(item) => item._id}
         dataSource={dataSource}
         pagination={pagination}
         loading={listIsLoading}
         onChange={handelDataTableLoad}
         scroll={{ x: true }}
+        locale={{
+          emptyText: translate('No data available'),
+        }}
       />
     </>
   );
