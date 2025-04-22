@@ -1,0 +1,10 @@
+require('@/models/coreModels/Setting');
+require('@/models/appModels/Taxes');
+require('@/models/appModels/Quote');
+require('@/models/appModels/Query');
+require('@/models/appModels/Invoice');
+require('@/models/appModels/PaymentMode');
+require('@/models/appModels/Payment');
+require('@/models/appModels/Client');
+require('@/models/coreModels/AdminPassword');
+require('@/models/coreModels/Admin');
