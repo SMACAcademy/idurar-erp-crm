@@ -4,6 +4,33 @@ const mongoose = require('mongoose');
 module.exports = downloadPdf = async (req, res, { directory, id }) => {
   try {
     const modelName = directory.slice(0, 1).toUpperCase() + directory.slice(1);
+    
+    // Check if this is a preview request
+    if (req.query.preview === 'true' && req.query.data) {
+      const previewData = JSON.parse(decodeURIComponent(req.query.data));
+      const fileId = modelName.toLowerCase() + '-' + previewData._id + '.pdf';
+      const folderPath = modelName.toLowerCase();
+      const targetLocation = `src/public/download/${folderPath}/${fileId}`;
+      
+      await custom.generatePdf(
+        modelName,
+        { filename: folderPath, format: 'A4', targetLocation },
+        previewData,
+        async () => {
+          return res.download(targetLocation, (error) => {
+            if (error)
+              return res.status(500).json({
+                success: false,
+                result: null,
+                message: "Couldn't find file",
+                error: error.message,
+              });
+          });
+        }
+      );
+      return;
+    }
+
     if (mongoose.models[modelName]) {
       const Model = mongoose.model(modelName);
       const result = await Model.findOne({
@@ -16,7 +43,6 @@ module.exports = downloadPdf = async (req, res, { directory, id }) => {
       }
 
       // Continue process if result is returned
-
       const fileId = modelName.toLowerCase() + '-' + result._id + '.pdf';
       const folderPath = modelName.toLowerCase();
       const targetLocation = `src/public/download/${folderPath}/${fileId}`;

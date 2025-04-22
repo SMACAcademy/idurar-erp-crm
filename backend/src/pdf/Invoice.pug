@@ -319,6 +319,10 @@ html
         
       .col.col-24
           .space     
+      if model.aiSummary
+        .notice-invoice
+          h3(style="color: #52008c; margin-bottom: 10px;") #{translate('AI Summary')}
+          .notice #{model.aiSummary}
       footer.footer-invoice
         //- | Invoice was created on a computer and is valid without the signature and seal.
           
