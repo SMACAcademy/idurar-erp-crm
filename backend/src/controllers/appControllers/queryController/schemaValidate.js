@@ -11,7 +11,7 @@ const schema = Joi.object({
       Joi.object({
         _id: Joi.string().allow('').optional(),
         text: Joi.string().optional(),
-      }).required()
+      }).optional()
     )
     .optional(),
 });
