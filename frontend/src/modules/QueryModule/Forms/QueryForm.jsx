@@ -155,7 +155,7 @@ function ItemRow({ field, remove, current = null }) {
   return (
     <Row gutter={[12, 12]} style={{ position: 'relative' }}>
       <Form.Item
-        name={[field.name, 'itemName']}
+        name={[field.name, 'text']}
         rules={[
           {
             pattern: /^(?!\s*$)[\s\S]+$/,
