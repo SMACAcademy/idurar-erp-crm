@@ -119,7 +119,6 @@ describe('Query Management API', () => {
         status: query.status,
         notes: updatedNotes,
       });
-    console.log('updateRes', updateRes.body);
 
     expect(updateRes.body.success).toBe(true);
     const updated = updateRes.body.result.notes;
