@@ -61,6 +61,7 @@ const invoiceSchema = new mongoose.Schema({
       },
       description: {
         type: String,
+        default: '',
       },
       quantity: {
         type: Number,
@@ -91,23 +92,27 @@ const invoiceSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      notes: {
+        type: String,
+        default: '',
+      },
     },
   ],
   taxRate: {
     type: Number,
-    default: 0,
+    required: true,
   },
   subTotal: {
     type: Number,
-    default: 0,
+    required: true,
   },
   taxTotal: {
     type: Number,
-    default: 0,
+    required: true,
   },
   total: {
     type: Number,
-    default: 0,
+    required: true,
   },
   currency: {
     type: String,
@@ -144,6 +149,7 @@ const invoiceSchema = new mongoose.Schema({
   },
   notes: {
     type: String,
+    default: '',
   },
   status: {
     type: String,
@@ -152,6 +158,7 @@ const invoiceSchema = new mongoose.Schema({
   },
   pdf: {
     type: String,
+    default: '',
   },
   files: [
     {
@@ -172,6 +179,10 @@ const invoiceSchema = new mongoose.Schema({
   created: {
     type: Date,
     default: Date.now,
+  },
+  aiSummary: {
+    type: String,
+    default: '',
   },
 });
 
