@@ -67,9 +67,9 @@ function Sidebar({ collapsible, isMobile = false }) {
     },
 
     {
-      key: 'queries',
+      key: 'query',
       icon: <ContainerOutlined />,
-      label: <Link to={'/queries'}>{translate('queries')}</Link>,
+      label: <Link to={'/query'}>{translate('queries')}</Link>,
     },
     {
       key: 'quote',

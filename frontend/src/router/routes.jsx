@@ -78,7 +78,7 @@ let routes = {
       element: <InvoiceRecordPayment />,
     },
     {
-      path: '/queries',
+      path: '/query',
       element: <Queries />,
     },
     {
