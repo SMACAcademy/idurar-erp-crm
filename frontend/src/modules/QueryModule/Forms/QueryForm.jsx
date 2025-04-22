@@ -19,36 +19,20 @@ export default function QueryForm({ subTotal = 0, current = null }) {
     return <></>;
   }
 
-  return <LoadQueryForm subTotal={subTotal} current={current} />;
+  return <LoadQueryForm current={current} />;
 }
 
-function LoadQueryForm({ subTotal = 0, current = null }) {
+function LoadQueryForm({ current = null }) {
   const translate = useLanguage();
-  const { dateFormat } = useDate();
   const { last_invoice_number } = useSelector(selectFinanceSettings);
-  const [total, setTotal] = useState(0);
-  const [taxRate, setTaxRate] = useState(0);
-  const [taxTotal, setTaxTotal] = useState(0);
-  const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [lastNumber, setLastNumber] = useState(() => last_invoice_number + 1);
-
-  const handelTaxChange = (value) => {
-    setTaxRate(value / 100);
-  };
 
   useEffect(() => {
     if (current) {
-      const { taxRate = 0, year, number } = current;
-      setTaxRate(taxRate / 100);
-      setCurrentYear(year);
+      const { number } = current;
       setLastNumber(number);
     }
   }, [current]);
-  useEffect(() => {
-    const currentTotal = calculate.add(calculate.multiply(subTotal, taxRate), subTotal);
-    setTaxTotal(Number.parseFloat(calculate.multiply(subTotal, taxRate)));
-    setTotal(Number.parseFloat(currentTotal));
-  }, [subTotal, taxRate]);
 
   const addField = useRef(false);
 

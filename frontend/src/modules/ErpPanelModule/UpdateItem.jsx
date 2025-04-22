@@ -128,6 +128,11 @@ export default function UpdateItem({ config, UpdateForm }) {
       const { subTotal } = formData;
 
       form.resetFields();
+
+      if (Array.isArray(formData?.notes) && formData?.notes.length > 0) {
+        formData = { ...formData, notes: formData.notes.map((note) => ({ text: note.text })) };
+      }
+
       form.setFieldsValue(formData);
       setSubTotal(subTotal);
     }
