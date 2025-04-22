@@ -25,7 +25,7 @@ const remove = async (req, res) => {
 
   return res.status(200).json({
     success: true,
-    result: deletedInvoice,
+    result: deletedQuery,
     message: 'Query deleted successfully',
   });
 };
