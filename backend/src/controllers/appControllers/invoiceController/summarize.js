@@ -31,7 +31,9 @@ const summarize = async (req, res) => {
   const itemsWithNotes = notes.filter((item) => item.note && item.note.trim().length > 0);
 
   if (itemsWithNotes.length === 0) {
-    return res.status(400).json({ success: true, message: 'No notes found in items' });
+    return res
+      .status(200)
+      .json({ success: true, message: 'No notes found in items to summarize', result });
   }
 
   try {
@@ -40,7 +42,12 @@ const summarize = async (req, res) => {
     const requestBody = {
       contents: [
         {
-          parts: [{ text: `Summarize the following notes:\n${prompt}` }],
+          role: 'user',
+          parts: [
+            {
+              text: `Summarize the following content directly. Return only the summary text — do not include any introductions, explanations, or filler:\n\n${prompt}`,
+            },
+          ],
         },
       ],
     };
@@ -53,8 +60,20 @@ const summarize = async (req, res) => {
 
     const summary =
       geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text || 'No summary generated';
+    console.log('geminiRes', summary);
+    const updateResult = await Model.findOneAndUpdate(
+      { _id: req.params.id, removed: false },
+      { $set: { generatedSummary: summary } },
+      {
+        new: true, // return the new result instead of the old one
+      }
+    ).exec();
 
-    return res.status(200).json({ success: true, result: summary });
+    console.log('updateResult', updateResult);
+
+    return res
+      .status(200)
+      .json({ success: true, result: updateResult, message: 'Summary generated successfully' });
   } catch (err) {
     console.error('Gemini API error:', err.response?.data || err.message);
     res.status(500).json({
