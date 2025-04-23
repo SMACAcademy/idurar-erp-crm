@@ -28,13 +28,13 @@ const Item = ({ item, currentErp }) => {
   const { moneyFormatter } = useMoney();
   return (
     <Row gutter={[12, 0]} key={item._id}>
-      <Col className="gutter-row" span={11}>
+      <Col className="gutter-row" span={10}>
         <p style={{ marginBottom: 5 }}>
           <strong>{item.itemName}</strong>
         </p>
         <p>{item.description}</p>
       </Col>
-      <Col className="gutter-row" span={4}>
+      <Col className="gutter-row" span={3}>
         <p
           style={{
             textAlign: 'right',
@@ -43,7 +43,7 @@ const Item = ({ item, currentErp }) => {
           {moneyFormatter({ amount: item.price, currency_code: currentErp.currency })}
         </p>
       </Col>
-      <Col className="gutter-row" span={4}>
+      <Col className="gutter-row" span={3}>
         <p
           style={{
             textAlign: 'right',
@@ -52,7 +52,7 @@ const Item = ({ item, currentErp }) => {
           {item.quantity}
         </p>
       </Col>
-      <Col className="gutter-row" span={5}>
+      <Col className="gutter-row" span={4}>
         <p
           style={{
             textAlign: 'right',
@@ -60,6 +60,11 @@ const Item = ({ item, currentErp }) => {
           }}
         >
           {moneyFormatter({ amount: item.total, currency_code: currentErp.currency })}
+        </p>
+      </Col>
+      <Col className="gutter-row" span={4}>
+        <p style={{ marginBottom: 5 }}>
+          <strong>{item.note}</strong>
         </p>
       </Col>
       <Divider dashed style={{ marginTop: 0, marginBottom: 15 }} />
@@ -242,12 +247,12 @@ export default function ReadItem({ config, selectedItem }) {
       </Descriptions>
       <Divider />
       <Row gutter={[12, 0]}>
-        <Col className="gutter-row" span={11}>
+        <Col className="gutter-row" span={10}>
           <p>
             <strong>{translate('Product')}</strong>
           </p>
         </Col>
-        <Col className="gutter-row" span={4}>
+        <Col className="gutter-row" span={3}>
           <p
             style={{
               textAlign: 'right',
@@ -256,7 +261,7 @@ export default function ReadItem({ config, selectedItem }) {
             <strong>{translate('Price')}</strong>
           </p>
         </Col>
-        <Col className="gutter-row" span={4}>
+        <Col className="gutter-row" span={3}>
           <p
             style={{
               textAlign: 'right',
@@ -265,13 +270,18 @@ export default function ReadItem({ config, selectedItem }) {
             <strong>{translate('Quantity')}</strong>
           </p>
         </Col>
-        <Col className="gutter-row" span={5}>
+        <Col className="gutter-row" span={4}>
           <p
             style={{
               textAlign: 'right',
             }}
           >
             <strong>{translate('Total')}</strong>
+          </p>
+        </Col>
+        <Col className="gutter-row" span={3}>
+          <p>
+            <strong>{translate('Note')}</strong>
           </p>
         </Col>
         <Divider />
