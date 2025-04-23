@@ -65,6 +65,12 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <ContainerOutlined />,
       label: <Link to={'/invoice'}>{translate('invoices')}</Link>,
     },
+
+    {
+      key: 'query',
+      icon: <ContainerOutlined />,
+      label: <Link to={'/query'}>{translate('queries')}</Link>,
+    },
     {
       key: 'quote',
       icon: <FileSyncOutlined />,

@@ -8,6 +8,7 @@ const { routesList } = require('@/models/utils');
 const routerApp = (entity, controller) => {
   router.route(`/${entity}/create`).post(catchErrors(controller['create']));
   router.route(`/${entity}/read/:id`).get(catchErrors(controller['read']));
+  router.route(`/${entity}/summarize/:id`).get(catchErrors(controller['summarize']));
   router.route(`/${entity}/update/:id`).patch(catchErrors(controller['update']));
   router.route(`/${entity}/delete/:id`).delete(catchErrors(controller['delete']));
   router.route(`/${entity}/search`).get(catchErrors(controller['search']));
@@ -27,6 +28,7 @@ const routerApp = (entity, controller) => {
 
 routesList.forEach(({ entity, controllerName }) => {
   const controller = appControllers[controllerName];
+
   routerApp(entity, controller);
 });
 

@@ -153,6 +153,35 @@ export const erp = {
         });
       }
     },
+  summarize:
+    ({ entity, id }) =>
+    async (dispatch) => {
+      dispatch({
+        type: actionTypes.REQUEST_LOADING,
+        keyState: 'summarize',
+        payload: null,
+      });
+
+      let data = await request.summarize({ entity, id });
+
+      if (data.success === true) {
+        dispatch({
+          type: actionTypes.CURRENT_ITEM,
+          payload: data.result,
+        });
+        dispatch({
+          type: actionTypes.REQUEST_SUCCESS,
+          keyState: 'summarize',
+          payload: data.result,
+        });
+      } else {
+        dispatch({
+          type: actionTypes.REQUEST_FAILED,
+          keyState: 'summarize',
+          payload: null,
+        });
+      }
+    },
   update:
     ({ entity, id, jsonData }) =>
     async (dispatch) => {

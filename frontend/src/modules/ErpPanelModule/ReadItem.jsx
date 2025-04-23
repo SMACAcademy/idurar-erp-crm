@@ -23,18 +23,19 @@ import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 import { useMoney, useDate } from '@/settings';
 import useMail from '@/hooks/useMail';
 import { useNavigate } from 'react-router-dom';
+import GenerateSummaryButton from '@/components/GenerateSummaryButton';
 
 const Item = ({ item, currentErp }) => {
   const { moneyFormatter } = useMoney();
   return (
     <Row gutter={[12, 0]} key={item._id}>
-      <Col className="gutter-row" span={11}>
+      <Col className="gutter-row" span={10}>
         <p style={{ marginBottom: 5 }}>
           <strong>{item.itemName}</strong>
         </p>
         <p>{item.description}</p>
       </Col>
-      <Col className="gutter-row" span={4}>
+      <Col className="gutter-row" span={3}>
         <p
           style={{
             textAlign: 'right',
@@ -43,7 +44,7 @@ const Item = ({ item, currentErp }) => {
           {moneyFormatter({ amount: item.price, currency_code: currentErp.currency })}
         </p>
       </Col>
-      <Col className="gutter-row" span={4}>
+      <Col className="gutter-row" span={3}>
         <p
           style={{
             textAlign: 'right',
@@ -52,7 +53,7 @@ const Item = ({ item, currentErp }) => {
           {item.quantity}
         </p>
       </Col>
-      <Col className="gutter-row" span={5}>
+      <Col className="gutter-row" span={4}>
         <p
           style={{
             textAlign: 'right',
@@ -60,6 +61,11 @@ const Item = ({ item, currentErp }) => {
           }}
         >
           {moneyFormatter({ amount: item.total, currency_code: currentErp.currency })}
+        </p>
+      </Col>
+      <Col className="gutter-row" span={4}>
+        <p style={{ marginBottom: 5 }}>
+          <strong>{item.note}</strong>
         </p>
       </Col>
       <Divider dashed style={{ marginTop: 0, marginBottom: 15 }} />
@@ -232,6 +238,8 @@ export default function ReadItem({ config, selectedItem }) {
               margin: '0 32px',
             }}
           />
+
+          {entity === 'invoice' && <GenerateSummaryButton id={currentErp._id} entity={entity} />}
         </Row>
       </PageHeader>
       <Divider dashed />
@@ -242,12 +250,12 @@ export default function ReadItem({ config, selectedItem }) {
       </Descriptions>
       <Divider />
       <Row gutter={[12, 0]}>
-        <Col className="gutter-row" span={11}>
+        <Col className="gutter-row" span={10}>
           <p>
             <strong>{translate('Product')}</strong>
           </p>
         </Col>
-        <Col className="gutter-row" span={4}>
+        <Col className="gutter-row" span={3}>
           <p
             style={{
               textAlign: 'right',
@@ -256,7 +264,7 @@ export default function ReadItem({ config, selectedItem }) {
             <strong>{translate('Price')}</strong>
           </p>
         </Col>
-        <Col className="gutter-row" span={4}>
+        <Col className="gutter-row" span={3}>
           <p
             style={{
               textAlign: 'right',
@@ -265,7 +273,7 @@ export default function ReadItem({ config, selectedItem }) {
             <strong>{translate('Quantity')}</strong>
           </p>
         </Col>
-        <Col className="gutter-row" span={5}>
+        <Col className="gutter-row" span={4}>
           <p
             style={{
               textAlign: 'right',
@@ -274,11 +282,86 @@ export default function ReadItem({ config, selectedItem }) {
             <strong>{translate('Total')}</strong>
           </p>
         </Col>
+        <Col className="gutter-row" span={3}>
+          <p>
+            <strong>{translate('Note')}</strong>
+          </p>
+        </Col>
         <Divider />
       </Row>
       {itemslist.map((item) => (
         <Item key={item._id} item={item} currentErp={currentErp}></Item>
       ))}
+      {entity === 'invoice' && currentErp.generatedSummary && (
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          {/* Left side */}
+          <div
+            style={{
+              width: '100%',
+              float: 'left',
+              textAlign: 'left',
+              fontWeight: '700',
+            }}
+          >
+            <Row gutter={[12, -5]}>
+              <Col className="gutter-row" span={3}>
+                <p>{translate('Summary')} :</p>
+              </Col>
+              <Col className="gutter-row" span={21}>
+                <p>{currentErp.generatedSummary}</p>
+              </Col>
+            </Row>
+          </div>
+
+          {/* Right side */}
+          <div
+            style={{
+              width: '300px',
+              float: 'right',
+              textAlign: 'right',
+              fontWeight: '700',
+            }}
+          >
+            <Row gutter={[12, -5]}>
+              <Col className="gutter-row" span={12}>
+                <p>{translate('Sub Total')} :</p>
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <p>
+                  {moneyFormatter({
+                    amount: currentErp.subTotal,
+                    currency_code: currentErp.currency,
+                  })}
+                </p>
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <p>
+                  {translate('Tax Total')} ({currentErp.taxRate} %) :
+                </p>
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <p>
+                  {moneyFormatter({
+                    amount: currentErp.taxTotal,
+                    currency_code: currentErp.currency,
+                  })}
+                </p>
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <p>{translate('Total')} :</p>
+              </Col>
+              <Col className="gutter-row" span={12}>
+                <p>
+                  {moneyFormatter({
+                    amount: currentErp.total,
+                    currency_code: currentErp.currency,
+                  })}
+                </p>
+              </Col>
+            </Row>
+          </div>
+        </div>
+      )}
       <div
         style={{
           width: '300px',

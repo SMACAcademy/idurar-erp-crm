@@ -7,6 +7,10 @@ const NotFound = lazy(() => import('@/pages/NotFound.jsx'));
 
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Customer = lazy(() => import('@/pages/Customer'));
+const Queries = lazy(() => import('@/pages/Queries'));
+const QueryCreate = lazy(() => import('@/pages/Queries/QueryCreate'));
+const QueryRead = lazy(() => import('@/pages/Queries/QueryRead.jsx'));
+const QueryUpdate = lazy(() => import('@/pages/Queries/QueryUpdate'));
 const Invoice = lazy(() => import('@/pages/Invoice'));
 const InvoiceCreate = lazy(() => import('@/pages/Invoice/InvoiceCreate'));
 
@@ -72,6 +76,22 @@ let routes = {
     {
       path: '/invoice/pay/:id',
       element: <InvoiceRecordPayment />,
+    },
+    {
+      path: '/query',
+      element: <Queries />,
+    },
+    {
+      path: '/query/create',
+      element: <QueryCreate />,
+    },
+    {
+      path: '/query/read/:id',
+      element: <QueryRead />,
+    },
+    {
+      path: '/query/update/:id',
+      element: <QueryUpdate />,
     },
     {
       path: '/quote',

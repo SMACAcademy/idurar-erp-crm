@@ -1,4 +1,5 @@
 const express = require('express');
+require('@/models/index'); // 👈 this line must be at the very top
 
 const cors = require('cors');
 const compression = require('compression');

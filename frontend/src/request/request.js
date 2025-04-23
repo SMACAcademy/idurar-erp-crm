@@ -63,6 +63,21 @@ const request = {
         notifyOnSuccess: false,
         notifyOnFailed: true,
       });
+
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  summarize: async ({ entity, id }) => {
+    try {
+      includeToken();
+      const response = await axios.get(entity + '/summarize/' + id);
+      successHandler(response, {
+        notifyOnSuccess: true,
+        notifyOnFailed: true,
+      });
+
       return response.data;
     } catch (error) {
       return errorHandler(error);
