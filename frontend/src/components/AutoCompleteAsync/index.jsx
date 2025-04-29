@@ -129,7 +129,7 @@ export default function AutoCompleteAsync({
       }}
       onChange={handleSelectChange}
       style={{ minWidth: '220px' }}
-      // onSelect={handleOnSelect}
+    // onSelect={handleOnSelect}
     >
       {selectOptions.map((optionField) => (
         <Select.Option

@@ -304,6 +304,7 @@ html
               tr
                 td.service #{item.itemName}
                   span #{item.description}
+                  span #{item.note}
                 td.qty #{item.quantity}  
                 td.unit  #{moneyFormatter({amount:item.price})}
                 td.total #{moneyFormatter({amount:item.total})}

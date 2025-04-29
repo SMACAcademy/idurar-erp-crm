@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8888:8888"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80" # 80 is internal nginx port, map to 3000
+    depends_on:
+      - backend

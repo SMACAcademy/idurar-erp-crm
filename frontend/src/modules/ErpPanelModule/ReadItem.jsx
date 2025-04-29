@@ -33,6 +33,8 @@ const Item = ({ item, currentErp }) => {
           <strong>{item.itemName}</strong>
         </p>
         <p>{item.description}</p>
+        <p>{item.note}</p>
+
       </Col>
       <Col className="gutter-row" span={4}>
         <p

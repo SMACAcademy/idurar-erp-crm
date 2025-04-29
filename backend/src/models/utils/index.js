@@ -11,6 +11,7 @@ const modelsFiles = globSync(pattern).map((filePath) => {
     extname(fileNameWithExtension),
     ''
   );
+  console.log(fileNameWithoutExtension,"routes")
   return fileNameWithoutExtension;
 });
 
@@ -25,6 +26,7 @@ for (const filePath of appModelsFiles) {
     extname(fileNameWithExtension),
     ''
   );
+  console.log(fileNameWithExtension,"files")
   const firstChar = fileNameWithoutExtension.charAt(0);
   const modelName = fileNameWithoutExtension.replace(firstChar, firstChar.toUpperCase());
   const fileNameLowerCaseFirstChar = fileNameWithoutExtension.replace(

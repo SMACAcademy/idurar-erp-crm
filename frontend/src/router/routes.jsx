@@ -1,3 +1,4 @@
+import QueryCreate from '@/pages/Query/queryCreate';
 import { lazy } from 'react';
 
 import { Navigate } from 'react-router-dom';
@@ -12,6 +13,9 @@ const InvoiceCreate = lazy(() => import('@/pages/Invoice/InvoiceCreate'));
 
 const InvoiceRead = lazy(() => import('@/pages/Invoice/InvoiceRead'));
 const InvoiceUpdate = lazy(() => import('@/pages/Invoice/InvoiceUpdate'));
+const QueryUpdate = lazy(() => import('@/pages/Query/queryUpdate'));
+const QueryRead = lazy(() => import('@/pages/Query/queryRead'));
+
 const InvoiceRecordPayment = lazy(() => import('@/pages/Invoice/InvoiceRecordPayment'));
 const Quote = lazy(() => import('@/pages/Quote/index'));
 const QuoteCreate = lazy(() => import('@/pages/Quote/QuoteCreate'));
@@ -28,6 +32,8 @@ const Taxes = lazy(() => import('@/pages/Taxes'));
 const Profile = lazy(() => import('@/pages/Profile'));
 
 const About = lazy(() => import('@/pages/About'));
+
+const Query = lazy(() => import('@/pages/Query'));
 
 let routes = {
   expense: [],
@@ -73,6 +79,25 @@ let routes = {
       path: '/invoice/pay/:id',
       element: <InvoiceRecordPayment />,
     },
+    // 
+    {
+      path: '/queries',
+      element: <Query />,
+    },
+    {
+      path: '/queries/create',
+      element: <QueryCreate />,
+    },
+    {
+      path: '/queries/read/:id',
+      element: <QueryRead />,
+    },
+    {
+      path: '/queries/update/:id',
+      element: <QueryUpdate />,
+    },
+
+    // 
     {
       path: '/quote',
       element: <Quote />,

@@ -1,101 +1,91 @@
-<div align="center">
-    <a href="https://www.idurarapp.com/">
-  <img src="https://avatars.githubusercontent.com/u/50052356?s=200&v=4" width="128px" />
-    </a>
-    <h1>Open Source ERP / CRM Accounting Invoice Quote</h1>
-    <p align="center">
-        <p>IDURAR ERP CRM | Simple To Use</p>
-    </p>
-    
+# 🧩 Pente Task App – Fullstack Setup Guide
 
-```
- Give a Star ⭐️ & Fork to this project ... Happy coding! 🤩`
-```
+This repository contains both the **frontend** and **backend** of the Pente Task App. Follow the steps below to set up the development environment, configure environment variables, run the application locally or via Docker, and test the application.
 
-IDURAR is Open Source ERP / CRM (Invoice / Quote / Accounting ) Based on Advanced Mern Stack (Node.js / Express.js / MongoDb / React.js ) with Ant Design (AntD) and Redux
+---
 
-</div>
+## 🌐 Live Demo
 
-**🚀 Self-hosted Entreprise Version** : [https://cloud.idurarapp.com](https://cloud.idurarapp.com)
+▶️ **Video Demo**: [Click to Watch](https://drive.google.com/file/d/1HkLHoQAQtJsW0wL1duv4ACNlGwr-mDgP/view?usp=drive_link)
+
+📎 **Pull Request Proof** (Includes Docker and Postman Images): [View PR](https://github.com/vishnu14279/idurar-erp-crm/pull/1)
+
+---
+
+## 🧪 Local Setup (Frontend + Backend)
 
 
+```bash
+1. Fork the Repository
 
-## Features :
+- Fork the monorepo: [https://github.com/vishnu14279/idurar-erp-crm/](https://github.com/vishnu14279/idurar-erp-crm/)
+- Then clone it locally:
 
-Invoice Management
+git clone https://github.com/your-username/idurar-erp-crm.git
+cd idurar-erp-crm
+-------------------------------------------------------------------
+2. Set Up Environment Variables
+Create a .env file inside the backend folder with the following contents:
 
-Payment Management
+env
 
-Quote Management
+DATABASE="your_mongodb_uri"
+RESEND_API="your_resend_api"
+OPENAI_API_KEY="your_openai_api_key"
+JWT_SECRET="your_private_jwt_secret_key"
+NODE_ENV="production"
+OPENSSL_CONF="/dev/null"
+PUBLIC_SERVER_FILE="http://localhost:8888/"
+GEMINI_API_KEY="your_gemini_api_key"
+------------------------------------------------------------------------
+3. Install Dependencies
+Install dependencies in both frontend and backend directories:
 
-Customer Management
+bash
 
-Ant Design Framework(AntD) 🐜
+cd backend
+command-> npm install
 
-Based on Mern Stack (Node.js / Express.js / MongoDb / React.js ) 👨‍💻
+command-> cd ../frontend
+command-> npm install
+-------------------------------------------------------------------------
+4. Start the Application
+Start both frontend and backend servers:
 
-### May i can use IDURAR for Commercial use :
+bash
 
-- Yes You can use IDURAR for free for personal or Commercial use.
+# In backend folder
+command-> npm run dev
 
-## Our Sponsors
+# In frontend folder (new terminal)
+command-> npm run dev
+Your backend server and React frontend should now be running locally.
 
-  <a href="https://m.do.co/c/4ead8370b905?ref=idurarapp.com">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg" width="201px">
-  </a>
+👤 Create a Default User
+To seed the database with an initial user, run the following command from the backend folder:
+bash
 
-#
+command-> node Src/setup/setup.js
+-------------------------------------------------------------
+🐳 Docker Deployment Guide
+📦 Backend Docker Setup
+bash
 
-<img width="1403" alt="Open Source ERP CRM" src="https://github.com/idurar/idurar-erp-crm/assets/136928179/a6712286-7ca6-4822-8902-fb7523533ee8">
+command-> cd backend
+command-> docker build -t pente-backend .
+command-> docker run -d -p 8888:8888 --env-file .env pente-backend
 
-## Free Open Source ERP / CRM App
+--------------------------------------------------------------
+🌐 Frontend Docker Setup
+bash
 
-IDURAR is Open "Fair-Code" Source ERP / CRM (Invoice / Inventory / Accounting / HR) Based on Mern Stack (Node.js / Express.js / MongoDb / React.js ) with Ant Design (AntD) and Redux
+command-> cd frontend
+command-> docker build -t pente-frontend .
+command-> docker run -d -p 3000:3000 pente-frontend
+-------------------------------------------------------------
+✅ Testing
+Use Postman to test API endpoints.
 
+Refer to the PR link for screenshots of Postman test cases and Docker deployment.
 
-## Getting started
-
-1.[Clone the repository](INSTALLATION-INSTRUCTIONS.md#step-1-clone-the-repository)
-
-2.[Create Your MongoDB Account and Database Cluster](INSTALLATION-INSTRUCTIONS.md#Step-2-Create-Your-MongoDB-Account-and-Database-Cluster)
-
-3.[Edit the Environment File](INSTALLATION-INSTRUCTIONS.md#Step-3-Edit-the-Environment-File)
-
-4.[Update MongoDB URI](INSTALLATION-INSTRUCTIONS.md#Step-4-Update-MongoDB-URI)
-
-5.[Install Backend Dependencies](INSTALLATION-INSTRUCTIONS.md#Step-5-Install-Backend-Dependencies)
-
-6.[Run Setup Script](INSTALLATION-INSTRUCTIONS.md#Step-6-Run-Setup-Script)
-
-7.[Run the Backend Server](INSTALLATION-INSTRUCTIONS.md#Step-7-Run-the-Backend-Server)
-
-8.[Install Frontend Dependencies](INSTALLATION-INSTRUCTIONS.md#Step-8-Install-Frontend-Dependencies)
-
-9.[Run the Frontend Server](INSTALLATION-INSTRUCTIONS.md#Step-9-Run-the-Frontend-Server)
-
-## Contributing
-
-1.[How to contribute](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#how-to-contribute)
-
-2.[Reporting issues](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#reporting-issues)
-
-3.[Working on issues ](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#working-on-issues)
-
-4.[Submitting pull requests](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#submitting-pull-requests)
-
-5.[Commit Guidelines](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#commit-guidelines)
-
-6.[Coding Guidelines](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#coding-guidelines)
-
-7.[Questions](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#questions)
-
-
-## Show your support
-
-Dont forget to give a ⭐️ to this project ... Happy coding!
-
-**🚀 Self-hosted Entreprise Version** : [https://cloud.idurarapp.com](https://cloud.idurarapp.com)
-
-## License
-
-IDURAR is Free Open Source Released under the GNU Affero General Public License v3.0.
+Ensure your MongoDB connection string is active and working before launching the backend.

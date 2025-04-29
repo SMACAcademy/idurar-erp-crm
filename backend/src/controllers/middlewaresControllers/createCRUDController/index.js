@@ -10,6 +10,7 @@ const search = require('./search');
 const filter = require('./filter');
 const summary = require('./summary');
 const listAll = require('./listAll');
+const query = require('./query')
 const paginatedList = require('./paginatedList');
 
 const createCRUDController = (modelName) => {
@@ -28,6 +29,7 @@ const createCRUDController = (modelName) => {
     search: (req, res) => search(Model, req, res),
     filter: (req, res) => filter(Model, req, res),
     summary: (req, res) => summary(Model, req, res),
+    // query: (req, res) => query(Model, req, res)
   };
   return crudMethods;
 };

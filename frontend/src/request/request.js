@@ -38,6 +38,98 @@ const request = {
       return errorHandler(error);
     }
   },
+  createSummary: async ({ entity, jsonData }) => {
+    try {
+      includeToken();
+      const response = await axios.post(entity + '/createSummary', jsonData);
+      successHandler(response, {
+        notifyOnSuccess: true,
+        notifyOnFailed: true,
+      });
+      return response;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  // Query Create
+  createQuery: async ({ entity, jsonData }) => {
+    try {
+      includeToken();
+      const response = await axios.post(entity, jsonData);
+      successHandler(response, {
+        notifyOnSuccess: true,
+        notifyOnFailed: true,
+      });
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  readQuery: async ({ entity, id }) => {
+    try {
+      includeToken();
+      const response = await axios.get(`${entity}/${id}`);
+      successHandler(response, {
+        notifyOnSuccess: false,
+        notifyOnFailed: true,
+      });
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  updateQuery: async ({ entity, id, jsonData }) => {
+    try {
+      includeToken();
+      const response = await axios.put(`${entity}/${id}`, jsonData);
+      successHandler(response, {
+        notifyOnSuccess: true,
+        notifyOnFailed: true,
+      });
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  addQueryNote: async ({ id, entity, noteData }) => {
+    try {
+      includeToken();
+      const response = await axios.post(`/${entity}/${id}/notes`, noteData); // POST to update or create
+      successHandler(response, {
+        notifyOnSuccess: true,
+        notifyOnFailed: true,
+      });
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  deleteQueryNote: async ({ id, noteId, entity }) => {
+    try {
+      includeToken();
+      const response = await axios.delete(`/${entity}/${id}/notes/${noteId}`);
+      successHandler(response, {
+        notifyOnSuccess: true,
+        notifyOnFailed: true,
+      });
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  deleteQuery: async ({ entity, id }) => {
+    try {
+      includeToken();
+      const response = await axios.delete(`${entity}/${id}`);
+      successHandler(response, {
+        notifyOnSuccess: true,
+        notifyOnFailed: true,
+      });
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
   createAndUpload: async ({ entity, jsonData }) => {
     try {
       includeToken();
@@ -152,6 +244,25 @@ const request = {
     }
   },
 
+  listQuery: async ({ entity, options = {} }) => {
+    try {
+      includeToken();
+      let query = '?';
+      for (var key in options) {
+        query += key + '=' + options[key] + '&';
+      }
+      query = query.slice(0, -1);
+      const response = await axios.get(entity + query);
+
+      successHandler(response, {
+        notifyOnSuccess: false,
+        notifyOnFailed: false,
+      });
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
   list: async ({ entity, options = {} }) => {
     try {
       includeToken();
@@ -160,8 +271,7 @@ const request = {
         query += key + '=' + options[key] + '&';
       }
       query = query.slice(0, -1);
-
-      const response = await axios.get(entity + '/list' + query);
+      const response = await axios.get(entity + "/list", query);
 
       successHandler(response, {
         notifyOnSuccess: false,

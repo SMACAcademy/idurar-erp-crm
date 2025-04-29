@@ -19,17 +19,17 @@ import calculate from '@/utils/calculate';
 import { useSelector } from 'react-redux';
 import SelectAsync from '@/components/SelectAsync';
 
-export default function InvoiceForm({ subTotal = 0, current = null }) {
+export default function InvoiceForm({ subTotal = 0, current = null, form }) {
   const { last_invoice_number } = useSelector(selectFinanceSettings);
 
   if (last_invoice_number === undefined) {
     return <></>;
   }
 
-  return <LoadInvoiceForm subTotal={subTotal} current={current} />;
+  return <LoadInvoiceForm subTotal={subTotal} current={current} form={form} />;
 }
 
-function LoadInvoiceForm({ subTotal = 0, current = null }) {
+function LoadInvoiceForm({ subTotal = 0, current = null, form }) {
   const translate = useLanguage();
   const { dateFormat } = useDate();
   const { last_invoice_number } = useSelector(selectFinanceSettings);
@@ -180,6 +180,7 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
         <Col className="gutter-row" span={7}>
           <p>{translate('Description')}</p>
         </Col>
+
         <Col className="gutter-row" span={3}>
           <p>{translate('Quantity')}</p>{' '}
         </Col>
@@ -189,12 +190,15 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
         <Col className="gutter-row" span={5}>
           <p>{translate('Total')}</p>
         </Col>
+        <Col className="gutter-row" span={10}>
+          <p>{translate('Note')}</p>
+        </Col>
       </Row>
       <Form.List name="items">
         {(fields, { add, remove }) => (
           <>
             {fields.map((field) => (
-              <ItemRow key={field.key} remove={remove} field={field} current={current}></ItemRow>
+              <ItemRow key={field.key} remove={remove} field={field} current={current} form={form}></ItemRow>
             ))}
             <Form.Item>
               <Button
