@@ -27,6 +27,7 @@ const Taxes = lazy(() => import('@/pages/Taxes'));
 const Query = lazy(() => import('@/pages/Query'));
 const QueryCreate = lazy(() => import('@/pages/Query/QueryCreate'));
 const QueryRead = lazy(() => import('@/pages/Query/QueryRead'));
+const QueryUpdate = lazy(() => import('@/pages/Query/QueryUpdate'));
 
 const Profile = lazy(() => import('@/pages/Profile'));
 
@@ -141,8 +142,11 @@ let routes = {
     {
       path: '/query/read/:id',
       element: <QueryRead />,
+    },  
+    {
+      path: '/query/update/:id',
+      element: <QueryUpdate />,
     },
-    
   ],
 };
 

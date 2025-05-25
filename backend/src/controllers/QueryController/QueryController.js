@@ -1,5 +1,5 @@
 const QueryModals = require("@/models/QueryModals/QueryModals");
-
+const generateSummary = require("@/utils/MistralService");
 
 // GET all with pagination
 exports.getQueries = async (req, res) => {
@@ -55,3 +55,26 @@ exports.deleteNote = async (req, res) => {
   await query.save();
   res.json(query.notes);
 };
+
+exports.generateQuerySummary = async (req, res) => {
+    try {
+      const query = await QueryModals.findById(req.params.id).populate('notes');
+      const textToSummarize = `${query.description}. Notes: ${query.notes.map(n => n.text).join(', ')}`;
+      const summary = await generateSummary(textToSummarize);
+      res.json({ summary });
+    } catch (error) {
+        console.error('Summary generation error:', error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+// DELETE query
+exports.deleteQuery = async (req, res) => {
+  try {
+    const deleted = await QueryModals.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ error: 'Query not found' });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};    

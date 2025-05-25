@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Descriptions, Button, Input, List, message, Select } from 'antd';
+import { Card, Descriptions, Button, Input, List, message, Select, Space } from 'antd';
 import axios from 'axios';
 
 export default function QueryRead() {
@@ -9,9 +9,12 @@ export default function QueryRead() {
   const [loading, setLoading] = useState(true);
   const [note, setNote] = useState('');
   const [status, setStatus] = useState('');
+  const [summary, setSummary] = useState('');
+  const [generating, setGenerating] = useState(false);
 
   useEffect(() => {
     fetchQuery();
+    
   }, [id]);
 
   const fetchQuery = async () => {
@@ -26,6 +29,8 @@ export default function QueryRead() {
       setLoading(false);
     }
   };
+
+
 
   const handleAddNote = async () => {
     if (!note.trim()) return;
@@ -51,6 +56,19 @@ export default function QueryRead() {
     }
   };
 
+  const handleGenerateSummary = async () => {
+    setGenerating(true);
+    try {
+      const response = await axios.get(`/queries/${id}/summary`);
+      setSummary(response.data.summary);
+      message.success('Summary generated!');
+    } catch (error) {
+      message.error('Failed to generate summary');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (!query) return <div>Query not found</div>;
 
@@ -71,6 +89,16 @@ export default function QueryRead() {
           />
         </Descriptions.Item>
         <Descriptions.Item label="Description">{query.description}</Descriptions.Item>
+        <Descriptions.Item label="Summary">
+          <Space>
+            {summary}
+            {!summary && (
+            <Button size="small" loading={generating} onClick={handleGenerateSummary}>
+              Generate Summary
+            </Button>
+            )}
+          </Space>
+        </Descriptions.Item>
       </Descriptions>
 
       <Card title="Notes" style={{ marginTop: 16 }}>
