@@ -319,6 +319,11 @@ html
         
       .col.col-24
           .space     
+      .notice-invoice
+        if model.notes
+          .notice
+            p.strong #{translate('Notes')}:
+            p #{model.notes}
       footer.footer-invoice
         //- | Invoice was created on a computer and is valid without the signature and seal.
           
