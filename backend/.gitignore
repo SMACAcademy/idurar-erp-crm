@@ -4,6 +4,6 @@ node_modules/
 .idea
 notes.md
 .env.local
-
 *.pdf
 .env
+*.env

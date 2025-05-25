@@ -8,7 +8,7 @@ export default function QuoteRead() {
 
   const Labels = {
     PANEL_TITLE: translate('quote'),
-    DATATABLE_TITLE: translate('quote_list'),
+    DataTable_TITLE: translate('quote_list'),
     ADD_NEW_ENTITY: translate('add_new_quote'),
     ENTITY_NAME: translate('quote'),
   };
