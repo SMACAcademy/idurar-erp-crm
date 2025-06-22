@@ -99,3 +99,8 @@ Dont forget to give a ⭐️ to this project ... Happy coding!
 ## License
 
 IDURAR is Free Open Source Released under the GNU Affero General Public License v3.0.
+
+
+refer the sceen-shot folder 
+
+view link: https://drive.google.com/file/d/17cnOeJuWr9ipz_h7Qk6Uy7ssSkFMH6gz/view?usp=drive_link
