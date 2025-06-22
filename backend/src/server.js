@@ -18,22 +18,28 @@ mongoose.connect(process.env.DATABASE);
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
+mongoose.connection.once('open', async () => {
+  console.log('✅ Database Connection Established!');
+
+  // Load models after the database connection is established
+  console.log('Loading models...');
+  const modelsFiles = globSync('./src/models/**/*.js');
+
+  for (const filePath of modelsFiles) {
+    require(path.resolve(filePath));
+  }
+
+  // Start our app after models are loaded
+  const app = require('./app');
+  app.set('port', process.env.PORT || 8888);
+  const server = app.listen(app.get('port'), () => {
+    console.log(`Express running → On PORT : ${server.address().port}`);
+  });
+});
+
 mongoose.connection.on('error', (error) => {
   console.log(
     `1. 🔥 Common Error caused issue → : check your .env file first and add your mongodb url`
   );
   console.error(`2. 🚫 Error → : ${error.message}`);
-});
-
-const modelsFiles = globSync('./src/models/**/*.js');
-
-for (const filePath of modelsFiles) {
-  require(path.resolve(filePath));
-}
-
-// Start our app!
-const app = require('./app');
-app.set('port', process.env.PORT || 8888);
-const server = app.listen(app.get('port'), () => {
-  console.log(`Express running → On PORT : ${server.address().port}`);
 });
