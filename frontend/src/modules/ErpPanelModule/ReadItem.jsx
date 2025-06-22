@@ -317,6 +317,13 @@ export default function ReadItem({ config, selectedItem }) {
           </Col>
         </Row>
       </div>
+      {currentErp.notes && (
+        <>
+          <Divider />
+          <h3>{translate('Notes')}</h3>
+          <p style={{ whiteSpace: 'pre-wrap', paddingLeft: 4 }}>{currentErp.notes}</p>
+        </>
+      )}
     </>
   );
 }
