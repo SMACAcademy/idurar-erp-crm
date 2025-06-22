@@ -187,9 +187,9 @@ export default function DataTable({ config, extra = [] }) {
             displayLabels={['name']}
             searchFields={'name'}
             onChange={filterTable}
-            // redirectLabel={'Add New Client'}
-            // withRedirect
-            // urlToRedirect={'/customer'}
+          // redirectLabel={'Add New Client'}
+          // withRedirect
+          // urlToRedirect={'/customer'}
           />,
           <Button onClick={handelDataTableLoad} key={`${uniqueId()}`} icon={<RedoOutlined />}>
             {translate('Refresh')}
