@@ -26,6 +26,7 @@ import {
   FilterOutlined,
   WalletOutlined,
   ReconciliationOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -69,6 +70,11 @@ function Sidebar({ collapsible, isMobile = false }) {
       key: 'quote',
       icon: <FileSyncOutlined />,
       label: <Link to={'/quote'}>{translate('quote')}</Link>,
+    },
+    {
+      key: 'queries',
+      icon: <QuestionCircleOutlined />,
+      label: <Link to={'/queries'}>{translate('queries')}</Link>,
     },
     {
       key: 'payment',
