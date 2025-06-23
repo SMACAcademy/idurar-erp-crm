@@ -15,14 +15,7 @@ import {
   Row,
   Col,
 } from 'antd';
-import {
-  PlusOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  ArrowLeftOutlined,
-} from '@ant-design/icons';
+import { PlusOutlined, DeleteOutlined, EditOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import useLanguage from '@/locale/useLanguage';
 import axios from 'axios';
 import { API_BASE_URL } from '@/config/serverApiConfig';
@@ -247,21 +240,7 @@ const QueryManager = () => {
       dataIndex: 'status',
       key: 'status',
       width: 100,
-      render: (status) => (
-        <Tag
-          color={
-            status === 'open'
-              ? 'blue'
-              : status === 'in_progress'
-                ? 'orange'
-                : status === 'resolved'
-                  ? 'green'
-                  : 'red'
-          }
-        >
-          {translate(status)}
-        </Tag>
-      ),
+      render: (status) => <Tag>{translate(status)}</Tag>,
     },
     {
       title: translate('resolution'),
@@ -349,41 +328,65 @@ const QueryManager = () => {
             expandable={{
               expandedRowRender: (record) => (
                 <Card title={translate('notes')} style={{ margin: '16px 0' }}>
-                  <div style={{ marginBottom: 16 }}>
+                  {record.notes && record.notes.length > 0 ? (
+                    <div style={{ marginBottom: 16 }}>
+                      {record.notes.map((note) => (
+                        <Card
+                          key={note._id}
+                          style={{ marginBottom: 8 }}
+                          size="small"
+                          extra={
+                            <Button
+                              danger
+                              icon={<DeleteOutlined />}
+                              size="small"
+                              onClick={() => handleDeleteNote(record._id, note._id)}
+                            />
+                          }
+                        >
+                          <p style={{ margin: 0, marginBottom: 8 }}>{note.content}</p>
+                          <small style={{ color: '#888' }}>
+                            {note.createdDate
+                              ? new Date(note.createdDate).toLocaleString()
+                              : 'Invalid date'}
+                          </small>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <p style={{ color: '#888', fontStyle: 'italic', marginBottom: 16 }}>
+                      {translate('no_notes_available') || 'No notes available'}
+                    </p>
+                  )}
+
+                  <div
+                    style={{
+                      borderTop: '1px solid #f0f0f0',
+                      paddingTop: 16,
+                      backgroundColor: '#fafafa',
+                      padding: '16px',
+                      borderRadius: '6px',
+                    }}
+                  >
+                    <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: 600 }}>
+                      {translate('add_new_note') || 'Add New Note'}
+                    </h4>
                     <TextArea
                       value={noteText}
                       onChange={(e) => setNoteText(e.target.value)}
-                      placeholder={translate('add_note_placeholder')}
-                      rows={4}
+                      placeholder={translate('add_note_placeholder') || 'Enter your note here...'}
+                      rows={3}
+                      style={{ marginBottom: 12 }}
                     />
                     <Button
                       type="primary"
                       onClick={() => handleAddNote(record._id)}
-                      style={{ marginTop: 8 }}
+                      disabled={!noteText.trim()}
+                      block
                     >
-                      {translate('add_note')}
+                      {translate('add_note') || 'Add Note'}
                     </Button>
                   </div>
-                  {record.notes?.map((note) => (
-                    <Card
-                      key={note._id}
-                      style={{ marginBottom: 8 }}
-                      extra={
-                        <Button
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={() => handleDeleteNote(record._id, note._id)}
-                        />
-                      }
-                    >
-                      <p>{note.content}</p>
-                      <small>
-                        {note.createdDate
-                          ? new Date(note.createdDate).toLocaleString()
-                          : 'Invalid date'}
-                      </small>
-                    </Card>
-                  ))}
                 </Card>
               ),
             }}

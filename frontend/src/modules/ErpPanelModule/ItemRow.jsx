@@ -70,9 +70,23 @@ export default function ItemRow({ field, remove, current = null }) {
           <Input placeholder="Item Name" />
         </Form.Item>
       </Col>
-      <Col className="gutter-row" span={7}>
-        <Form.Item name={[field.name, 'description']}>
-          <Input placeholder="description Name" />
+      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+        <Form.Item
+          name={[field.name, 'description']}
+          label="Description"
+          rules={[
+            {
+              required: true,
+              message: 'Please input description!',
+            },
+          ]}
+        >
+          <Input.TextArea rows={2} />
+        </Form.Item>
+      </Col>
+      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+        <Form.Item name={[field.name, 'note']} label="Note">
+          <Input.TextArea rows={2} />
         </Form.Item>
       </Col>
       <Col className="gutter-row" span={3}>
