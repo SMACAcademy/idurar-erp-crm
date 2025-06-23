@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const moment = require('moment');
+const Invoice = require('../../../models/appModels/Invoice');
+const { summarizeInvoiceNotes } = require('../../../utils/gemini');
 
 const Model = mongoose.model('Invoice');
 
@@ -208,4 +210,56 @@ const summary = async (req, res) => {
   });
 };
 
-module.exports = summary;
+async function generateSummary(req, res) {
+  try {
+    const invoiceId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(invoiceId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid invoice ID format',
+      });
+    }
+
+    // Find the invoice
+    const invoice = await Invoice.findOne({ _id: invoiceId, removed: false });
+
+    if (!invoice) {
+      return res.status(404).json({
+        success: false,
+        message: 'Invoice not found',
+      });
+    }
+
+    // Extract notes from invoice items
+    const notes = invoice.items.map((item) => item.note).filter(Boolean);
+
+    if (notes.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No notes available for summarization',
+      });
+    }
+
+    // Generate summary using Gemini
+    const summary = await summarizeInvoiceNotes(notes);
+
+    // Update invoice with the summary
+    invoice.summary = summary;
+    await invoice.save();
+
+    return res.status(200).json({
+      success: true,
+      summary,
+    });
+  } catch (error) {
+    console.error('Error generating summary:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to generate summary',
+      error: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+    });
+  }
+}
+
+module.exports = { summary, generateSummary };

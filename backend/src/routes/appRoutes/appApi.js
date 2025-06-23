@@ -4,6 +4,7 @@ const router = express.Router();
 
 const appControllers = require('@/controllers/appControllers');
 const { routesList } = require('@/models/utils');
+const { generateSummary } = require('../../controllers/appControllers/invoiceController/summary');
 
 const routerApp = (entity, controller) => {
   router.route(`/${entity}/create`).post(catchErrors(controller['create']));
@@ -29,5 +30,7 @@ routesList.forEach(({ entity, controllerName }) => {
   const controller = appControllers[controllerName];
   routerApp(entity, controller);
 });
+
+router.post('/invoices/:id/summary', catchErrors(generateSummary));
 
 module.exports = router;

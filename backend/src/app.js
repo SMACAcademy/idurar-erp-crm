@@ -9,7 +9,7 @@ const fileUpload = require('express-fileupload');
 // Load models first
 require('./models/coreModels/Admin');
 require('./models/coreModels/AdminPassword');
-
+const geminiApiRouter = require('./routes/coreRoutes/geminiApi.js');
 const coreAuthRouter = require('./routes/coreRoutes/coreAuth');
 const coreApiRouter = require('./routes/coreRoutes/coreApi');
 const coreDownloadRouter = require('./routes/coreRoutes/coreDownloadRouter');
@@ -44,6 +44,7 @@ app.use('/api', coreAuthRouter);
 app.use('/api', adminAuth.isValidAuthToken, coreApiRouter);
 app.use('/api', adminAuth.isValidAuthToken, erpApiRouter);
 app.use('/api', adminAuth.isValidAuthToken, queryRouter);
+app.use('/api/gemini', adminAuth.isValidAuthToken, geminiApiRouter);
 app.use('/download', coreDownloadRouter);
 app.use('/public', corePublicRouter);
 

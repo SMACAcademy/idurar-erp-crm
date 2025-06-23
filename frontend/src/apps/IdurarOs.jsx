@@ -5,15 +5,18 @@ import { AppContextProvider } from '@/context/appContext';
 import PageLoader from '@/components/PageLoader';
 import AuthRouter from '@/router/AuthRouter';
 import Localization from '@/locale/Localization';
+import { notification, App } from 'antd';
 
 const ErpApp = lazy(() => import('./ErpApp'));
 
 const DefaultApp = () => (
   <Localization>
     <AppContextProvider>
-      <Suspense fallback={<PageLoader />}>
-        <ErpApp />
-      </Suspense>
+      <App>
+        <Suspense fallback={<PageLoader />}>
+          <ErpApp />
+        </Suspense>
+      </App>
     </AppContextProvider>
   </Localization>
 );
