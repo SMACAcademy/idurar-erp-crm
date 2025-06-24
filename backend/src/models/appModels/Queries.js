@@ -1,25 +1,9 @@
 const mongoose = require('mongoose');
-const generateName = () => {
-  const names = [
-    'Alice',
-    'Bob',
-    'Charlie',
-    'Diana',
-    'Ethan',
-    'Fiona',
-    'George',
-    'Hannah',
-    'Ivan',
-    'Julia',
-  ];
-  const random = names[Math.floor(Math.random() * 10)];
-  return random;
-};
+
 const querySchema = mongoose.Schema({
   customername: {
     type: String,
-
-    default: generateName(),
+    required: true,
   },
   description: {
     type: String,
@@ -31,7 +15,7 @@ const querySchema = mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['open', 'closed', 'running'],
+    enum: ['open', 'closed', 'inProgress'],
   },
   notes: [
     {
@@ -45,5 +29,5 @@ const querySchema = mongoose.Schema({
       },
     },
   ],
-});
+},{timestamps: true});
 module.exports = mongoose.model('Queries', querySchema);

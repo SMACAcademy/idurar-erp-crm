@@ -1,13 +1,15 @@
+const { default: mongoose } = require('mongoose');
 const querySchema = require('../../../models/appModels/Queries');
-
+const model=mongoose.model('Client')
 const getallQueries = async (req, res) => {
-  const { page, limit } = req.query;
+  const { page, limit,status } = req.query;
   console.log('Fetching all queries');
   const pageNumber = parseInt(page) || 1;
   const limitNumber = parseInt(limit) || 10;
-  const skip = (page - 1) * limit;
+  const skip = (pageNumber - 1) * limitNumber;
   try {
-    const result = await querySchema.find().skip(skip).limit(limitNumber).sort({ createdAt: -1 });
+    const result = await querySchema.find(status ? {status:status} :null).skip(skip).limit(limitNumber).sort({ createdAt: -1 });
+    const totalDocuments = await querySchema.countDocuments();
     const totalPages = Math.ceil(totalDocuments / limitNumber);
     console.log(result);
     if (result.length > 0) {
@@ -16,6 +18,7 @@ const getallQueries = async (req, res) => {
         currencies: totalPages,
         totalPages,
         result,
+        total: totalDocuments,
         message: 'queries fetched successfully',
       });
     } else if (result.length === 0) {
@@ -35,8 +38,10 @@ const getallQueries = async (req, res) => {
 };
 
 const createQuery = async (req, res) => {
-  const { description, status, resolution } = req.body;
-  if (!description || !status) {
+  const {customername, description,status,resolution } = req.body;
+  console.log(req.body)
+
+  if (!description || !status || !customername) {
     return res.status(500).json({
       success: false,
       message: 'please enter all details',
@@ -49,7 +54,9 @@ const createQuery = async (req, res) => {
     });
   }
   try {
+    const customer = await model.findById(customername);
     const result = await querySchema.create({
+      customername: customer ? customer.name : 'Unknown Customer',
       description,
       status,
       resolution: resolution || '',

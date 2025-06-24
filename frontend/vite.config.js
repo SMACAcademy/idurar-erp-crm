@@ -13,6 +13,11 @@ export default ({ mode }) => {
 
   const config = {
     plugins: [react()],
+    test:{
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/setupTests.js', 
+  },
     resolve: {
       base: '/',
       alias: {

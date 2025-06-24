@@ -1,3 +1,4 @@
+
 import { lazy } from 'react';
 
 import { Navigate } from 'react-router-dom';
@@ -28,7 +29,8 @@ const Taxes = lazy(() => import('@/pages/Taxes'));
 const Profile = lazy(() => import('@/pages/Profile'));
 
 const About = lazy(() => import('@/pages/About'));
-
+const Queries = lazy(() => import('@/pages/queries/index'));
+const CreateQuery = lazy(() => import('@/pages/queries/createquery'));
 let routes = {
   expense: [],
   default: [
@@ -122,6 +124,14 @@ let routes = {
     {
       path: '/profile',
       element: <Profile />,
+    },
+    {
+      path:'/queries',
+      element:<Queries/>
+    },
+    {
+      path: '/queries/create',
+      element: <CreateQuery/>,
     },
     {
       path: '*',
