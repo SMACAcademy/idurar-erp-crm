@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Divider } from 'antd';
 
-import { Button, Row, Col, Descriptions, Statistic, Tag } from 'antd';
+import { Button, Row, Col, Descriptions, Statistic, Tag, message, Card, Space } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 import {
   EditOutlined,
@@ -9,11 +9,14 @@ import {
   CloseCircleOutlined,
   RetweetOutlined,
   MailOutlined,
+  FileTextOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
 
 import { useSelector, useDispatch } from 'react-redux';
 import useLanguage from '@/locale/useLanguage';
 import { erp } from '@/redux/erp/actions';
+import { request } from '@/request';
 
 import { generate as uniqueId } from 'shortid';
 
@@ -23,6 +26,7 @@ import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 import { useMoney, useDate } from '@/settings';
 import useMail from '@/hooks/useMail';
 import { useNavigate } from 'react-router-dom';
+import { generateInvoicePDF } from '@/utils/pdfGenerator';
 
 const Item = ({ item, currentErp }) => {
   const { moneyFormatter } = useMoney();
@@ -33,6 +37,11 @@ const Item = ({ item, currentErp }) => {
           <strong>{item.itemName}</strong>
         </p>
         <p>{item.description}</p>
+        {item.note && (
+          <p style={{ marginTop: 5, color: '#666', fontStyle: 'italic' }}>
+            <strong>Note:</strong> {item.note}
+          </p>
+        )}
       </Col>
       <Col className="gutter-row" span={4}>
         <p
@@ -72,6 +81,7 @@ export default function ReadItem({ config, selectedItem }) {
   const { entity, ENTITY_NAME } = config;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const { moneyFormatter } = useMoney();
   const { send, isLoading: mailInProgress } = useMail({ entity });
@@ -98,6 +108,7 @@ export default function ReadItem({ config, selectedItem }) {
   const [itemslist, setItemsList] = useState([]);
   const [currentErp, setCurrentErp] = useState(selectedItem ?? resetErp);
   const [client, setClient] = useState({});
+  const [summary, setSummary] = useState('');
 
   useEffect(() => {
     if (currentResult) {
@@ -123,11 +134,47 @@ export default function ReadItem({ config, selectedItem }) {
     }
   }, [currentErp]);
 
+  const generateSummary = async () => {
+    try {
+      setLoading(true);
+      const response = await request.post({
+        entity: '/gemini/summarize-notes',
+        jsonData: {
+          notes: currentErp.items?.map((item) => item.description) || [],
+        },
+      });
+      if (response && response.success) {
+        setSummary(response.result);
+        message.success('Summary generated successfully');
+      } else {
+        message.error(response?.message || 'Failed to generate summary');
+      }
+    } catch (error) {
+      console.error('Error generating summary:', error);
+      message.error(error?.response?.data?.message || 'Failed to generate summary');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExportPDF = () => {
+    try {
+      const doc = generateInvoicePDF(currentErp, summary);
+      doc.save(`invoice-${currentErp.number}.pdf`);
+      message.success('PDF exported successfully');
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      message.error('Failed to export PDF');
+    }
+  };
+
+  const hasNotes = itemslist.some((item) => item.note && item.note.trim().length > 0);
+
   return (
-    <>
+    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
       <PageHeader
         onBack={() => {
-          navigate(`/${entity.toLowerCase()}`);
+          dispatch(erp.list({ entity: config.entity }));
         }}
         title={`${ENTITY_NAME} # ${currentErp.number}/${currentErp.year || ''}`}
         ghost={false}
@@ -143,23 +190,26 @@ export default function ReadItem({ config, selectedItem }) {
           <Button
             key={`${uniqueId()}`}
             onClick={() => {
-              navigate(`/${entity.toLowerCase()}`);
+              dispatch(erp.list({ entity: config.entity }));
             }}
             icon={<CloseCircleOutlined />}
           >
             {translate('Close')}
           </Button>,
-          <Button
-            key={`${uniqueId()}`}
-            onClick={() => {
-              window.open(
-                `${DOWNLOAD_BASE_URL}${entity}/${entity}-${currentErp._id}.pdf`,
-                '_blank'
-              );
-            }}
-            icon={<FilePdfOutlined />}
-          >
-            {translate('Download PDF')}
+          entity === 'invoice' && (
+            <Button
+              key={`${uniqueId()}`}
+              onClick={generateSummary}
+              icon={<FileTextOutlined />}
+              loading={loading}
+              disabled={!hasNotes}
+              title={!hasNotes ? 'No notes available for summarization' : ''}
+            >
+              {translate('Generate Summary')}
+            </Button>
+          ),
+          <Button key={`${uniqueId()}`} onClick={handleExportPDF} icon={<MailOutlined />}>
+            {translate('Export PDF')}
           </Button>,
           <Button
             key={`${uniqueId()}`}
@@ -199,124 +249,96 @@ export default function ReadItem({ config, selectedItem }) {
             {translate('Edit')}
           </Button>,
         ]}
-        style={{
-          padding: '20px 0px',
-        }}
-      >
-        <Row>
-          <Statistic title="Status" value={currentErp.status} />
-          <Statistic
-            title={translate('SubTotal')}
-            value={moneyFormatter({
-              amount: currentErp.subTotal,
-              currency_code: currentErp.currency,
-            })}
-            style={{
-              margin: '0 32px',
-            }}
-          />
-          <Statistic
-            title={translate('Total')}
-            value={moneyFormatter({ amount: currentErp.total, currency_code: currentErp.currency })}
-            style={{
-              margin: '0 32px',
-            }}
-          />
-          <Statistic
-            title={translate('Paid')}
-            value={moneyFormatter({
-              amount: currentErp.credit,
-              currency_code: currentErp.currency,
-            })}
-            style={{
-              margin: '0 32px',
-            }}
-          />
-        </Row>
-      </PageHeader>
-      <Divider dashed />
-      <Descriptions title={`Client : ${currentErp.client.name}`}>
-        <Descriptions.Item label={translate('Address')}>{client.address}</Descriptions.Item>
-        <Descriptions.Item label={translate('email')}>{client.email}</Descriptions.Item>
-        <Descriptions.Item label={translate('Phone')}>{client.phone}</Descriptions.Item>
-      </Descriptions>
-      <Divider />
-      <Row gutter={[12, 0]}>
-        <Col className="gutter-row" span={11}>
-          <p>
-            <strong>{translate('Product')}</strong>
-          </p>
-        </Col>
-        <Col className="gutter-row" span={4}>
-          <p
-            style={{
-              textAlign: 'right',
-            }}
-          >
-            <strong>{translate('Price')}</strong>
-          </p>
-        </Col>
-        <Col className="gutter-row" span={4}>
-          <p
-            style={{
-              textAlign: 'right',
-            }}
-          >
-            <strong>{translate('Quantity')}</strong>
-          </p>
-        </Col>
-        <Col className="gutter-row" span={5}>
-          <p
-            style={{
-              textAlign: 'right',
-            }}
-          >
-            <strong>{translate('Total')}</strong>
-          </p>
-        </Col>
-        <Divider />
-      </Row>
-      {itemslist.map((item) => (
-        <Item key={item._id} item={item} currentErp={currentErp}></Item>
-      ))}
-      <div
-        style={{
-          width: '300px',
-          float: 'right',
-          textAlign: 'right',
-          fontWeight: '700',
-        }}
-      >
-        <Row gutter={[12, -5]}>
-          <Col className="gutter-row" span={12}>
-            <p>{translate('Sub Total')} :</p>
-          </Col>
+      />
 
-          <Col className="gutter-row" span={12}>
-            <p>
-              {moneyFormatter({ amount: currentErp.subTotal, currency_code: currentErp.currency })}
-            </p>
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <p>
-              {translate('Tax Total')} ({currentErp.taxRate} %) :
-            </p>
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <p>
-              {moneyFormatter({ amount: currentErp.taxTotal, currency_code: currentErp.currency })}
-            </p>
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <p>{translate('Total')} :</p>
-          </Col>
-          <Col className="gutter-row" span={12}>
-            <p>
-              {moneyFormatter({ amount: currentErp.total, currency_code: currentErp.currency })}
-            </p>
-          </Col>
-        </Row>
-      </div>
-    </>
+      <Space direction="vertical" size="large" style={{ width: '100%', marginTop: '24px' }}>
+        {/* AI Summary Card */}
+        <Card
+          title="AI Summary"
+          extra={
+            <Button
+              type="primary"
+              onClick={generateSummary}
+              loading={loading}
+              icon={<SyncOutlined />}
+            >
+              Generate Summary
+            </Button>
+          }
+          style={{ width: '100%' }}
+        >
+          {summary ? (
+            <div
+              style={{
+                padding: '16px',
+                backgroundColor: '#f9f9f9',
+                borderRadius: '4px',
+                whiteSpace: 'pre-wrap',
+                lineHeight: '1.6',
+              }}
+            >
+              {summary}
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: '16px',
+                backgroundColor: '#f9f9f9',
+                borderRadius: '4px',
+                color: '#999',
+                textAlign: 'center',
+              }}
+            >
+              No summary generated yet. Click the button above to generate one.
+            </div>
+          )}
+        </Card>
+
+        {/* Invoice Details Card */}
+        <Card title="Invoice Details" style={{ width: '100%' }}>
+          <div className="invoice-body">
+            <div style={{ marginBottom: '16px' }}>
+              <strong>Invoice Number:</strong> {currentErp.number}
+            </div>
+            <div style={{ marginBottom: '16px' }}>
+              <strong>Date:</strong> {new Date(currentErp.date).toLocaleDateString()}
+            </div>
+            <Divider />
+            <div style={{ marginBottom: '16px' }}>
+              <strong>Items:</strong>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {currentErp.items?.map((item, index) => (
+                  <li
+                    key={index}
+                    style={{
+                      marginBottom: '8px',
+                      padding: '8px',
+                      borderBottom: '1px solid #f0f0f0',
+                    }}
+                  >
+                    <div>
+                      <strong>Description:</strong> {item.description}
+                    </div>
+                    <div>
+                      <strong>Quantity:</strong> {item.quantity}
+                    </div>
+                    <div>
+                      <strong>Price:</strong> {item.price}
+                    </div>
+                    <div>
+                      <strong>Total:</strong> {item.quantity * item.price}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <Divider />
+            <div style={{ textAlign: 'right', fontSize: '16px' }}>
+              <strong>Total Amount:</strong> {currentErp.total}
+            </div>
+          </div>
+        </Card>
+      </Space>
+    </div>
   );
 }

@@ -1,0 +1,61 @@
+services:
+  backend-dev:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: dev
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8888:8888"
+    environment:
+      - JWT_SECRET="your_private_jwt_secret_key"
+      - NODE_ENV="development"
+      - OPENSSL_CONF='/dev/null'
+      - PUBLIC_SERVER_FILE="http://localhost:8888/"
+      - DATABASE="mongodb+srv://pratikbhujbal:R7D9n4arvMJGesjb@codingtaskcluster.345mzuc.mongodb.net/?retryWrites=true&w=majority&appName=codingtaskCluster"
+      - GEMINI_API_KEY="AIzaSyAWDiEaxzpcguQevxpq9Ru9IdXqOjc-otQ"
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      target: dev
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_FILE_BASE_URL='http://localhost:8888/'
+      - VITE_BACKEND_SERVER="http://localhost:8888/"
+      - PROD=false
+    depends_on:
+      - backend-dev
+
+  backend-prod:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: prod
+    ports:
+      - "8888:8888"
+    environment:
+      - JWT_SECRET="your_private_jwt_secret_key"
+      - NODE_ENV="production"
+      - OPENSSL_CONF='/dev/null'
+      - PUBLIC_SERVER_FILE="http://localhost:8888/"
+      - DATABASE="mongodb+srv://pratikbhujbal:R7D9n4arvMJGesjb@codingtaskcluster.345mzuc.mongodb.net/?retryWrites=true&w=majority&appName=codingtaskCluster"
+      - GEMINI_API_KEY="AIzaSyAWDiEaxzpcguQevxpq9Ru9IdXqOjc-otQ"
+
+  frontend-prod:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      target: prod
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_FILE_BASE_URL='http://localhost:8888/'
+      - VITE_BACKEND_SERVER="http://localhost:8888/"
+      - PROD=true
+    depends_on:
+      - backend-prod

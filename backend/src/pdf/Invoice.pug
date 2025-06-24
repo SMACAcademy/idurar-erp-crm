@@ -255,6 +255,23 @@ html
         padding: 20px 0;
         text-align: center;
       }
+      .summary-section {
+        margin-top: 20px;
+        padding: 15px;
+        border-top: 1px solid #c2e0f2;
+      }
+      .summary-title {
+        color: #52008c;
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+      .summary-content {
+        font-size: 12px;
+        line-height: 1.5;
+        color: #222;
+        white-space: pre-line;
+      }
  
   body
     
@@ -285,10 +302,14 @@ html
         .right.col-10
             .billTo
                 p #{translate('Client')} :
-                p #{model.client.name}
-                p #{model.client.address}
-                p #{model.client.phone}
-                p #{model.client.email}
+                if model.client && model.client.name
+                    p #{model.client.name}
+                if model.client && model.client.address
+                    p #{model.client.address}
+                if model.client && model.client.phone
+                    p #{model.client.phone}
+                if model.client && model.client.email
+                    p #{model.client.email}
         .col.col-24
           .space  
       main
@@ -304,6 +325,8 @@ html
               tr
                 td.service #{item.itemName}
                   span #{item.description}
+                  if item.note
+                    span(style="display:block; clear:both; width:100%; color:#666; margin-top:5px; font-size:10px; font-style:italic;") Note: #{item.note}
                 td.qty #{item.quantity}  
                 td.unit  #{moneyFormatter({amount:item.price})}
                 td.total #{moneyFormatter({amount:item.total})}
@@ -322,5 +345,7 @@ html
       footer.footer-invoice
         //- | Invoice was created on a computer and is valid without the signature and seal.
           
-
-   
+      if summary
+        .summary-section
+          .summary-title Summary
+          .summary-content #{summary}

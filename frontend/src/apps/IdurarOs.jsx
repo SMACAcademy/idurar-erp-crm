@@ -1,27 +1,32 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
-
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { selectAuth } from '@/redux/auth/selectors';
 import { AppContextProvider } from '@/context/appContext';
 import PageLoader from '@/components/PageLoader';
 import AuthRouter from '@/router/AuthRouter';
 import Localization from '@/locale/Localization';
-import { notification } from 'antd';
+import { notification, App } from 'antd';
 
 const ErpApp = lazy(() => import('./ErpApp'));
 
 const DefaultApp = () => (
   <Localization>
     <AppContextProvider>
-      <Suspense fallback={<PageLoader />}>
-        <ErpApp />
-      </Suspense>
+      <App>
+        <Suspense fallback={<PageLoader />}>
+          <ErpApp />
+        </Suspense>
+      </App>
     </AppContextProvider>
   </Localization>
 );
 
 export default function IdurarOs() {
   const { isLoggedIn } = useSelector(selectAuth);
+  const [isInitialized, setIsInitialized] = useState(false);
+  useEffect(() => {
+    setIsInitialized(true);
+  }, []);
 
   console.log(
     '🚀 Welcome to IDURAR ERP CRM! Did you know that we also offer commercial customization services? Contact us at hello@idurarapp.com for more information.'
@@ -61,13 +66,14 @@ export default function IdurarOs() {
   //   };
   // }, [navigator.onLine]);
 
+  if (!isInitialized) return <PageLoader />;
+
   if (!isLoggedIn)
     return (
       <Localization>
         <AuthRouter />
       </Localization>
     );
-  else {
-    return <DefaultApp />;
-  }
+
+  return <DefaultApp />;
 }

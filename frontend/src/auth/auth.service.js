@@ -13,14 +13,22 @@ export const login = async ({ loginData }) => {
 
     const { status, data } = response;
 
-    successHandler(
-      { data, status },
-      {
-        notifyOnSuccess: false,
-        notifyOnFailed: true,
-      }
-    );
-    return data;
+    if (data.success === true) {
+      successHandler(
+        { data, status },
+        {
+          notifyOnSuccess: false,
+          notifyOnFailed: true,
+        }
+      );
+      return data;
+    } else {
+      return {
+        success: false,
+        result: null,
+        message: data.message || 'Login failed',
+      };
+    }
   } catch (error) {
     return errorHandler(error);
   }
@@ -32,14 +40,21 @@ export const register = async ({ registerData }) => {
 
     const { status, data } = response;
 
-    successHandler(
-      { data, status },
-      {
-        notifyOnSuccess: true,
-        notifyOnFailed: true,
-      }
-    );
-    return data;
+    if (data.success === true) {
+      successHandler(
+        { data, status },
+        {
+          notifyOnSuccess: true,
+          notifyOnFailed: true,
+        }
+      );
+    } else {
+      return {
+        success: false,
+        result: null,
+        message: data.message || 'Register failed',
+      };
+    }
   } catch (error) {
     return errorHandler(error);
   }
