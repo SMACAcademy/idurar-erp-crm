@@ -20,7 +20,7 @@ export default function Queries() {
     setLoading(true);
     try {
       const response = await axios.get(
-        `http://localhost:8888/api/queries?page=${page}&limit=${limit}&status=${status}`
+        `${import.meta.env.VITE_FILE_BASE_URL}api/queries?page=${page}&limit=${limit}&status=${status}`
       );
       console.log(response.data);
       if (response.data.success === false) {

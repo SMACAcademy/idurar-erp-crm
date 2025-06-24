@@ -22,7 +22,7 @@ export default function CreateQuery() {
         resolution: values.resolution,
       };
 
-      const response = await axios.post('http://localhost:8888/api/queries', body);
+      const response = await axios.post(`${import.meta.env.VITE_FILE_BASE_URL}/api/queries`, body);
       if (response.data.success === false) {
         return message.error(response.data.message || 'Failed to create query');
       }
