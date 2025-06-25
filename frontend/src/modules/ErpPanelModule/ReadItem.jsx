@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Divider } from 'antd';
+import { Divider, message } from 'antd';
 
 import { Button, Row, Col, Descriptions, Statistic, Tag } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
@@ -23,45 +23,39 @@ import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 import { useMoney, useDate } from '@/settings';
 import useMail from '@/hooks/useMail';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Item = ({ item, currentErp }) => {
   const { moneyFormatter } = useMoney();
   return (
     <Row gutter={[12, 0]} key={item._id}>
-      <Col className="gutter-row" span={11}>
-        <p style={{ marginBottom: 5 }}>
+      <Col span={6}>
+        <p>
           <strong>{item.itemName}</strong>
         </p>
-        <p>{item.description}</p>
+        {item.description && <p style={{ color: '#888' }}>{item.description}</p>}
       </Col>
-      <Col className="gutter-row" span={4}>
-        <p
-          style={{
-            textAlign: 'right',
-          }}
-        >
+
+      <Col span={4}>
+        <p style={{ textAlign: 'right' }}>
           {moneyFormatter({ amount: item.price, currency_code: currentErp.currency })}
         </p>
       </Col>
-      <Col className="gutter-row" span={4}>
-        <p
-          style={{
-            textAlign: 'right',
-          }}
-        >
-          {item.quantity}
-        </p>
+
+      <Col span={4}>
+        <p style={{ textAlign: 'right' }}>{item.quantity}</p>
       </Col>
-      <Col className="gutter-row" span={5}>
-        <p
-          style={{
-            textAlign: 'right',
-            fontWeight: '700',
-          }}
-        >
+
+      <Col span={5}>
+        <p style={{ textAlign: 'right', fontWeight: '700' }}>
           {moneyFormatter({ amount: item.total, currency_code: currentErp.currency })}
         </p>
       </Col>
+
+      <Col span={5}>
+        <p style={{ textAlign: 'right' }}>{item.note || '-'}</p>
+      </Col>
+
       <Divider dashed style={{ marginTop: 0, marginBottom: 15 }} />
     </Row>
   );
@@ -98,6 +92,7 @@ export default function ReadItem({ config, selectedItem }) {
   const [itemslist, setItemsList] = useState([]);
   const [currentErp, setCurrentErp] = useState(selectedItem ?? resetErp);
   const [client, setClient] = useState({});
+  const [summary, setSummary] = useState('');
 
   useEffect(() => {
     if (currentResult) {
@@ -122,7 +117,44 @@ export default function ReadItem({ config, selectedItem }) {
       setClient(currentErp.client);
     }
   }, [currentErp]);
+  const generateSummary = async (id) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_FILE_BASE_URL}api/invoice/summary/${id}`
+      );
+      if (!response.data.success) {
+        return message.error('Something went wrong please try again later');
+      }
+      const { summary } = response.data;
+      if (summary) {
+        return setSummary(summary);
+      }
+      return message.error('Something went wrong please try again later');
+    } catch (error) {
+      console.error('Error generating summary:', error);
+      message.error('Something went wrong please try again later');
+    }
+  };
 
+  const handleGenerateSummaryAndDownload = async (currentErp) => {
+    try {
+      // your AI summary function
+
+      // 2. Send POST request to backend with summary
+      const response = await axios.post(
+        `${import.meta.env.VITE_FILE_BASE_URL}api/invoice/${currentErp._id}`,
+        { summary: summary || null }, // 🔥 send summary here
+        { responseType: 'blob' } // 📄 Get binary PDF
+      );
+      console.log('PDF response:', response);
+      // 3. Convert response to Blob and open in new tab
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      window.open(pdfUrl, '_blank');
+    } catch (error) {
+      console.error('PDF download failed:', error);
+    }
+  };
   return (
     <>
       <PageHeader
@@ -151,12 +183,7 @@ export default function ReadItem({ config, selectedItem }) {
           </Button>,
           <Button
             key={`${uniqueId()}`}
-            onClick={() => {
-              window.open(
-                `${DOWNLOAD_BASE_URL}${entity}/${entity}-${currentErp._id}.pdf`,
-                '_blank'
-              );
-            }}
+            onClick={() => handleGenerateSummaryAndDownload(currentErp)}
             icon={<FilePdfOutlined />}
           >
             {translate('Download PDF')}
@@ -198,6 +225,13 @@ export default function ReadItem({ config, selectedItem }) {
           >
             {translate('Edit')}
           </Button>,
+          <Button
+            key={`${uniqueId()}`}
+            className="ai-summary-button"
+            onClick={() => generateSummary(currentErp._id)}
+          >
+            AI summary✨
+          </Button>,
         ]}
         style={{
           padding: '20px 0px',
@@ -232,6 +266,12 @@ export default function ReadItem({ config, selectedItem }) {
               margin: '0 32px',
             }}
           />
+          {summary && (
+            <p style={{ font: 'serif', color: 'black', fontSize: '14px' }}>
+              <span style={{ font: 'bold' }}>SUMMARY : </span>
+              {summary}
+            </p>
+          )}
         </Row>
       </PageHeader>
       <Divider dashed />
@@ -242,37 +282,20 @@ export default function ReadItem({ config, selectedItem }) {
       </Descriptions>
       <Divider />
       <Row gutter={[12, 0]}>
-        <Col className="gutter-row" span={11}>
-          <p>
-            <strong>{translate('Product')}</strong>
-          </p>
+        <Col span={6}>
+          <strong>{translate('Product')}</strong>
         </Col>
-        <Col className="gutter-row" span={4}>
-          <p
-            style={{
-              textAlign: 'right',
-            }}
-          >
-            <strong>{translate('Price')}</strong>
-          </p>
+        <Col span={4} style={{ textAlign: 'right' }}>
+          <strong>{translate('Price')}</strong>
         </Col>
-        <Col className="gutter-row" span={4}>
-          <p
-            style={{
-              textAlign: 'right',
-            }}
-          >
-            <strong>{translate('Quantity')}</strong>
-          </p>
+        <Col span={4} style={{ textAlign: 'right' }}>
+          <strong>{translate('Quantity')}</strong>
         </Col>
-        <Col className="gutter-row" span={5}>
-          <p
-            style={{
-              textAlign: 'right',
-            }}
-          >
-            <strong>{translate('Total')}</strong>
-          </p>
+        <Col span={5} style={{ textAlign: 'right' }}>
+          <strong>{translate('Total')}</strong>
+        </Col>
+        <Col span={5} style={{ textAlign: 'right' }}>
+          <strong>{translate('Note')}</strong>
         </Col>
         <Divider />
       </Row>
@@ -306,6 +329,7 @@ export default function ReadItem({ config, selectedItem }) {
             <p>
               {moneyFormatter({ amount: currentErp.taxTotal, currency_code: currentErp.currency })}
             </p>
+            @
           </Col>
           <Col className="gutter-row" span={12}>
             <p>{translate('Total')} :</p>

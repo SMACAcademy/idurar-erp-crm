@@ -10,10 +10,9 @@ const coreApiRouter = require('./routes/coreRoutes/coreApi');
 const coreDownloadRouter = require('./routes/coreRoutes/coreDownloadRouter');
 const corePublicRouter = require('./routes/coreRoutes/corePublicRouter');
 const adminAuth = require('./controllers/coreControllers/adminAuth');
-
 const errorHandlers = require('./handlers/errorHandlers');
 const erpApiRouter = require('./routes/appRoutes/appApi');
-
+const geminiRouter = require('./routes/appRoutes/aisummary');
 const fileUpload = require('express-fileupload');
 // create our Express app
 const app = express();
@@ -39,9 +38,9 @@ app.use(compression());
 app.use('/api', coreAuthRouter);
 app.use('/api', adminAuth.isValidAuthToken, coreApiRouter);
 app.use('/api', adminAuth.isValidAuthToken, erpApiRouter);
-app.use('/download', coreDownloadRouter);
+app.use('/api', coreDownloadRouter);
 app.use('/public', corePublicRouter);
-
+app.use('/api',geminiRouter);
 // If that above routes didnt work, we 404 them and forward to error handler
 app.use(errorHandlers.notFound);
 

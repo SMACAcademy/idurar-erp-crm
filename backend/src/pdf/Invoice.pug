@@ -299,6 +299,7 @@ html
               th #{translate('Quantity')}
               th #{translate('PRICE')}
               th #{translate('TOTAL')}
+              th #{translate('NOTE')}
           tbody
             each item in model.items
               tr
@@ -307,6 +308,7 @@ html
                 td.qty #{item.quantity}  
                 td.unit  #{moneyFormatter({amount:item.price})}
                 td.total #{moneyFormatter({amount:item.total})}
+                td #{item.note || '-'}
             tr
               td(colspan='3') #{translate('SUB TOTAL')}
               td.total #{moneyFormatter({amount:model.subTotal})}
@@ -319,6 +321,15 @@ html
         
       .col.col-24
           .space     
+           if model.summary
+  .col.col-24.space
+    h2(style="color: #52008c; font-size: 16px; margin-bottom: 6px; border-bottom: 1px solid #ccc; padding-bottom: 4px;")
+      | Summary
+    div(
+      style="border: 1px solid #eee; background: #f9f9f9; padding: 10px; border-radius: 4px; font-size: 11px; line-height: 1.4; white-space: pre-wrap; color: #333;"
+    ) 
+      = model.summary
+
       footer.footer-invoice
         //- | Invoice was created on a computer and is valid without the signature and seal.
           

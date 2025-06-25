@@ -159,6 +159,20 @@
   padding: 30px 40px;
   margin: 70px auto;
 }
+.ai-summary-button {
+ padding: 5px 7px;
+  background: #0c3b60;
+  color:#e0e0e0;
+  
+  
+}   
+.ai-summary-button:hover {
+  background: #0c3b60;
+  color:#fff;
+  border: 1px solid #0c3b60;
+  border-radius: 5px;
+}
+
 
 @media only screen and (min-width: 1100px) {
   .hidden-lg {

@@ -9,6 +9,7 @@ const schema = require('./schemaValidate');
 
 const update = async (req, res) => {
   let body = req.body;
+  console.log('update body', body);
 
   const { error, value } = schema.validate(body);
   if (error) {
@@ -44,6 +45,7 @@ const update = async (req, res) => {
 
   //Calculate the items array with subTotal, total, taxTotal
   items.map((item) => {
+    console.log(item);
     let total = calculate.multiply(item['quantity'], item['price']);
     //sub total
     subTotal = calculate.add(subTotal, total);
