@@ -87,6 +87,11 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <ShopOutlined />,
     },
     {
+      key:'Queries',
+      label: <Link to={'/queries'}>{translate('queries')}</Link>,
+      icon: <FilterOutlined />,
+    },
+    {
       key: 'generalSettings',
       label: <Link to={'/settings'}>{translate('settings')}</Link>,
       icon: <SettingOutlined />,
