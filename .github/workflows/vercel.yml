@@ -1,0 +1,39 @@
+name: Vercel CI/CD 
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  deploy-frontend:
+    name: Deploy Frontend (Static)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Vercel (Frontend)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.FRONTEND_ORG_ID }}
+          vercel-project-id: ${{ secrets.FRONTEND_PROJECT_ID }}
+          working-directory: frontend
+    
+
+  deploy-backend:
+    name: Deploy Backend (Docker)
+    runs-on: ubuntu-latest
+    needs: deploy-frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Vercel (Backend Docker)
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.BACKEND_ORG_ID }}
+          vercel-project-id: ${{ secrets.BACKEND_PROJECT_ID }}
+          working-directory: backend
+          
