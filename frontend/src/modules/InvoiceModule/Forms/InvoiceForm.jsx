@@ -38,6 +38,7 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
   const [taxTotal, setTaxTotal] = useState(0);
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [lastNumber, setLastNumber] = useState(() => last_invoice_number + 1);
+  const [notes, setNotes] = useState('');
 
   const handelTaxChange = (value) => {
     setTaxRate(value / 100);
@@ -196,6 +197,7 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
             {fields.map((field) => (
               <ItemRow key={field.key} remove={remove} field={field} current={current}></ItemRow>
             ))}
+
             <Form.Item>
               <Button
                 type="dashed"
