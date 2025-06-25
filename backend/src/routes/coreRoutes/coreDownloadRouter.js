@@ -3,19 +3,20 @@ const express = require('express');
 
 const router = express.Router();
 
-router.route('/:directory/:file').get(function (req, res) {
+router.post('/:directory/:id', async function (req, res) {
+  console.log('loging',req.body.summary);
   try {
-    const { directory, file } = req.params;
-    const id = file.slice(directory.length + 1).slice(0, -4); // extract id from file name
-    downloadPdf(req, res, { directory, id });
+    const { directory, id } = req.params;
+    await downloadPdf(req, res, { directory, id }); // Same handler reused
   } catch (error) {
     return res.status(503).json({
       success: false,
       result: null,
       message: error.message,
-      error: error,
+      error,
     });
   }
 });
+
 
 module.exports = router;

@@ -65,6 +65,7 @@ exports.generatePdf = async (
         dateFormat,
         moneyFormatter,
         moment: moment,
+        summary: result.summary,
       });
 
       pdf

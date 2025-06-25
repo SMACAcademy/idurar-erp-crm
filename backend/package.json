@@ -14,7 +14,9 @@
     "reset": "node src/setup/reset.js"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.2.19",
     "@aws-sdk/client-s3": "^3.509.0",
+    "ai": "^4.3.16",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
