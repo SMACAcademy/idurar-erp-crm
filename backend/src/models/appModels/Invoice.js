@@ -1,3 +1,4 @@
+const { type } = require('@/locale/translation/en_us');
 const mongoose = require('mongoose');
 
 const invoiceSchema = new mongoose.Schema({
@@ -91,6 +92,9 @@ const invoiceSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      note:{
+        type: String,
+      }
     },
   ],
   taxRate: {

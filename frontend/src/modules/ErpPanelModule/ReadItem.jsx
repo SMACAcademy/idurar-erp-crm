@@ -28,40 +28,33 @@ const Item = ({ item, currentErp }) => {
   const { moneyFormatter } = useMoney();
   return (
     <Row gutter={[12, 0]} key={item._id}>
-      <Col className="gutter-row" span={11}>
-        <p style={{ marginBottom: 5 }}>
+      <Col span={6}>
+        <p>
           <strong>{item.itemName}</strong>
         </p>
-        <p>{item.description}</p>
+        {item.description && <p style={{ color: '#888' }}>{item.description}</p>}
       </Col>
-      <Col className="gutter-row" span={4}>
-        <p
-          style={{
-            textAlign: 'right',
-          }}
-        >
+
+      <Col span={4}>
+        <p style={{ textAlign: 'right' }}>
           {moneyFormatter({ amount: item.price, currency_code: currentErp.currency })}
         </p>
       </Col>
-      <Col className="gutter-row" span={4}>
-        <p
-          style={{
-            textAlign: 'right',
-          }}
-        >
-          {item.quantity}
-        </p>
+
+      <Col span={4}>
+        <p style={{ textAlign: 'right' }}>{item.quantity}</p>
       </Col>
-      <Col className="gutter-row" span={5}>
-        <p
-          style={{
-            textAlign: 'right',
-            fontWeight: '700',
-          }}
-        >
+
+      <Col span={5}>
+        <p style={{ textAlign: 'right', fontWeight: '700' }}>
           {moneyFormatter({ amount: item.total, currency_code: currentErp.currency })}
         </p>
       </Col>
+
+      <Col span={5}>
+        <p style={{ textAlign: 'right' }}>{item.note || '-'}</p>
+      </Col>
+
       <Divider dashed style={{ marginTop: 0, marginBottom: 15 }} />
     </Row>
   );
@@ -242,37 +235,20 @@ export default function ReadItem({ config, selectedItem }) {
       </Descriptions>
       <Divider />
       <Row gutter={[12, 0]}>
-        <Col className="gutter-row" span={11}>
-          <p>
-            <strong>{translate('Product')}</strong>
-          </p>
+        <Col span={6}>
+          <strong>{translate('Product')}</strong>
         </Col>
-        <Col className="gutter-row" span={4}>
-          <p
-            style={{
-              textAlign: 'right',
-            }}
-          >
-            <strong>{translate('Price')}</strong>
-          </p>
+        <Col span={4} style={{ textAlign: 'right' }}>
+          <strong>{translate('Price')}</strong>
         </Col>
-        <Col className="gutter-row" span={4}>
-          <p
-            style={{
-              textAlign: 'right',
-            }}
-          >
-            <strong>{translate('Quantity')}</strong>
-          </p>
+        <Col span={4} style={{ textAlign: 'right' }}>
+          <strong>{translate('Quantity')}</strong>
         </Col>
-        <Col className="gutter-row" span={5}>
-          <p
-            style={{
-              textAlign: 'right',
-            }}
-          >
-            <strong>{translate('Total')}</strong>
-          </p>
+        <Col span={5} style={{ textAlign: 'right' }}>
+          <strong>{translate('Total')}</strong>
+        </Col>
+        <Col span={5} style={{ textAlign: 'right' }}>
+          <strong>{translate('Note')}</strong>
         </Col>
         <Divider />
       </Row>
@@ -306,6 +282,7 @@ export default function ReadItem({ config, selectedItem }) {
             <p>
               {moneyFormatter({ amount: currentErp.taxTotal, currency_code: currentErp.currency })}
             </p>
+            @
           </Col>
           <Col className="gutter-row" span={12}>
             <p>{translate('Total')} :</p>
