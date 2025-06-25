@@ -3,7 +3,8 @@ import axios from 'axios';
 import { Table, Tag, Button, Space, message, Select, Row, Col } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import QueryModal from './QueryModal';
-import { EyeFilled } from '@ant-design/icons';
+import { DeleteOutlined, EyeFilled } from '@ant-design/icons';
+import Delete from '@/modules/ErpPanelModule/DeleteItem';
 const { Option } = Select;
 
 export default function Queries() {
@@ -92,9 +93,10 @@ export default function Queries() {
           <Button type="dashed"  data-testid="view-query" icon={<EyeFilled/>}onClick={() => handleEdit(column) }>
             
           </Button>
-          <Button type="primary" onClick={() => navigate(`/queries/update/${record._id}`)}>
+          <Button type="primary" onClick={() => navigate(`/queries/update/${column._id}`)}>
             +Add Note
           </Button>
+    
         </Space>
       ),
     },
