@@ -4,5 +4,5 @@ node_modules/
 .idea
 notes.md
 .env.local
-
+.env
 *.pdf
