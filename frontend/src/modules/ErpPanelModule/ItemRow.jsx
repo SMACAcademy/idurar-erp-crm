@@ -74,6 +74,9 @@ export default function ItemRow({ field, remove, current = null }) {
         <Form.Item name={[field.name, 'description']}>
           <Input placeholder="description Name" />
         </Form.Item>
+        <Form.Item name={[field.name, 'note']} style={{ marginTop: 4 }}>
+          <Input placeholder="Note (optional)" />
+        </Form.Item>
       </Col>
       <Col className="gutter-row" span={3}>
         <Form.Item name={[field.name, 'quantity']} rules={[{ required: true }]}>
