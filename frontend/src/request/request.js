@@ -298,5 +298,65 @@ const request = {
       return errorHandler(error);
     }
   },
+
+  getQueries: async ({ page = 1, limit = 10, status }) => {
+    try {
+      includeToken();
+      const response = await axios.get('queries', {
+        params: { page, limit, status },
+      });
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+
+  getCustomers: async () => {
+    try {
+      // No token needed for public customers endpoint
+      axios.defaults.baseURL = API_BASE_URL;
+      const response = await axios.get('customers');
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  createQuery: async (jsonData) => {
+    try {
+      // No token needed for public queries endpoint
+      axios.defaults.baseURL = API_BASE_URL;
+      const response = await axios.post('queries', jsonData);
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  updateQuery: async (id, jsonData) => {
+    try {
+      axios.defaults.baseURL = API_BASE_URL;
+      const response = await axios.put(`queries/${id}`, jsonData);
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  addQueryNote: async (id, jsonData) => {
+    try {
+      axios.defaults.baseURL = API_BASE_URL;
+      const response = await axios.post(`queries/${id}/notes`, jsonData);
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
+  deleteQueryNote: async (id, noteId) => {
+    try {
+      axios.defaults.baseURL = API_BASE_URL;
+      const response = await axios.delete(`queries/${id}/notes/${noteId}`);
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
 };
 export default request;

@@ -1,0 +1,8 @@
+{
+  "name": "idurar-erp-crm-backend-test-deps",
+  "private": true,
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "supertest": "^6.3.3"
+  }
+}
