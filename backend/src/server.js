@@ -12,7 +12,7 @@ if (major < 20) {
 
 // import environmental variables from our variables.env file
 require('dotenv').config({ path: '.env' });
-require('dotenv').config({ path: '.env.local' });
+// require('dotenv').config({ path: '.env.local' });
 
 mongoose.connect(process.env.DATABASE);
 
@@ -23,6 +23,11 @@ mongoose.connection.on('error', (error) => {
     `1. 🔥 Common Error caused issue → : check your .env file first and add your mongodb url`
   );
   console.error(`2. 🚫 Error → : ${error.message}`);
+});
+
+// ✅ Success handler
+mongoose.connection.once('open', () => {
+  console.log('✅ MongoDB connection successful');
 });
 
 const modelsFiles = globSync('./src/models/**/*.js');
