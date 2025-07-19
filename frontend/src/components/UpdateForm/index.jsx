@@ -10,6 +10,7 @@ import useLanguage from '@/locale/useLanguage';
 
 import { Button, Form } from 'antd';
 import Loading from '@/components/Loading';
+import ModernButton from '../Button/ModernButton';
 
 export default function UpdateForm({ config, formElements, withUpload = false }) {
   let { entity } = config;
@@ -105,9 +106,9 @@ export default function UpdateForm({ config, formElements, withUpload = false })
               paddingRight: '5px',
             }}
           >
-            <Button type="primary" htmlType="submit">
+            <ModernButton type="submit">
               {translate('Save')}
-            </Button>
+            </ModernButton>
           </Form.Item>
           <Form.Item
             style={{
@@ -115,7 +116,9 @@ export default function UpdateForm({ config, formElements, withUpload = false })
               paddingLeft: '5px',
             }}
           >
-            <Button onClick={showCurrentRecord}>{translate('Cancel')}</Button>
+            <ModernButton onClick={showCurrentRecord} type="button">
+              {translate('Cancel')}
+            </ModernButton>
           </Form.Item>
         </Form>
       </Loading>

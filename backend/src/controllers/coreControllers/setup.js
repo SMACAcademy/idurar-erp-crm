@@ -10,7 +10,7 @@ const setup = async (req, res) => {
   const Admin = mongoose.model('Admin');
   const AdminPassword = mongoose.model('AdminPassword');
   const Setting = mongoose.model('Setting');
-
+  const Currency = mongoose.model('Currency');
   const PaymentMode = mongoose.model('PaymentMode');
   const Taxes = mongoose.model('Taxes');
 
@@ -64,11 +64,11 @@ const setup = async (req, res) => {
     const file = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
     const settingsToUpdate = {
-      idurar_app_email: email,
-      idurar_app_company_email: email,
-      idurar_app_timezone: timezone,
-      idurar_app_country: country,
-      idurar_app_language: language || 'en_us',
+      erp_app_email: email,
+      erp_app_company_email: email,
+      erp_app_timezone: timezone,
+      erp_app_country: country,
+      erp_app_language: language || 'en_us',
     };
 
     const newSettings = file.map((x) => {
@@ -80,6 +80,10 @@ const setup = async (req, res) => {
   }
 
   await Setting.insertMany(settingData);
+
+  const { currencyList } = require('@/utils/currencyList');
+
+  await Currency.insertMany(currencyList);
 
   await Taxes.insertMany([{ taxName: 'Tax 0%', taxValue: '0', isDefault: true }]);
 
@@ -94,7 +98,7 @@ const setup = async (req, res) => {
   return res.status(200).json({
     success: true,
     result: {},
-    message: 'Successfully IDURAR App Setup',
+    message: 'Successfully erp App Setup',
   });
 };
 

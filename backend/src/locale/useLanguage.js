@@ -1,5 +1,10 @@
 const { readBySettingKey } = require('@/middlewares/settings');
 
+async function getCurrentLanguage() {
+  const { settingValue } = await readBySettingKey({ settingKey: 'language' });
+  return settingValue;
+}
+
 const getLabel = (lang, key) => {
   try {
     const lowerCaseKey = key
@@ -24,15 +29,22 @@ const getLabel = (lang, key) => {
   }
 };
 
-const useSelector = () => {
+const useSelector = (lang) => {
+  const filePath = `./translation/${lang}`;
   const defaultfilePath = `./translation/en_us`;
 
-  const langFile = require(defaultfilePath);
-  return langFile;
+  const currentTranslation = require(filePath);
+
+  if (currentTranslation) {
+    return currentTranslation;
+  } else {
+    const langFile = require(defaultfilePath);
+    return langFile;
+  }
 };
 
 const useLanguage = ({ selectedLang }) => {
-  const lang = useSelector();
+  const lang = useSelector(selectedLang);
   const translate = (value) => {
     const text = getLabel(lang, value);
     return text;

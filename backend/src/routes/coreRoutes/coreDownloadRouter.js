@@ -2,6 +2,7 @@ const downloadPdf = require('@/handlers/downloadHandler/downloadPdf');
 const express = require('express');
 
 const router = express.Router();
+const { hasPermission } = require('@/middlewares/permission');
 
 router.route('/:directory/:file').get(function (req, res) {
   try {

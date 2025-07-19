@@ -3,13 +3,18 @@ const moment = require('moment');
 
 const Model = mongoose.model('Quote');
 const { loadSettings } = require('@/middlewares/settings');
+const { checkCurrency } = require('@/utils/currency');
 
 const summary = async (req, res) => {
   let defaultType = 'month';
 
-  const { type } = req.query;
+  const { type, currency } = req.query;
 
   const settings = await loadSettings();
+
+  const currentCurrency = currency
+    ? currency.toUpperCase()
+    : settings['default_currency_code'].toUpperCase();
 
   if (type) {
     if (['week', 'month', 'year'].includes(type)) {
@@ -33,6 +38,7 @@ const summary = async (req, res) => {
     {
       $match: {
         removed: false,
+        currency: currentCurrency,
 
         // date: {
         //   $gte: startDate.toDate(),

@@ -9,6 +9,7 @@ import useLanguage from '@/locale/useLanguage';
 
 import { Button, Form } from 'antd';
 import Loading from '@/components/Loading';
+import ModernButton from '../Button/ModernButton';
 
 export default function CreateForm({ config, formElements, withUpload = false }) {
   let { entity } = config;
@@ -49,9 +50,9 @@ export default function CreateForm({ config, formElements, withUpload = false })
       <Form form={form} layout="vertical" onFinish={onSubmit}>
         {formElements}
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <ModernButton type="submit">
             {translate('Submit')}
-          </Button>
+          </ModernButton>
         </Form.Item>
       </Form>
     </Loading>

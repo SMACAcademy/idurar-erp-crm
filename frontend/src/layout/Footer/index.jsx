@@ -4,7 +4,9 @@ import { Layout } from 'antd';
 const { Footer } = Layout;
 
 const FooterContent = () => (
-  <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
+  <footer className="footer">
+    © 2024 CRM ERP. All rights reserved.
+  </footer>
 );
 
 export default FooterContent;

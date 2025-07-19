@@ -1,14 +1,50 @@
-import { Form, Select, Input, Switch, InputNumber } from 'antd';
+import { useState, useEffect } from 'react';
+import { Form, Input, InputNumber, Select, Switch } from 'antd';
 
 import useLanguage from '@/locale/useLanguage';
 
 import { currencyOptions } from '@/utils/currencyList';
 
+import { request } from '@/request';
+import useFetch from '@/hooks/useFetch';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectLangDirection } from '@/redux/translate/selectors';
+
 export default function SettingsForm() {
   const translate = useLanguage();
 
+  const [selectOptions, setOptions] = useState([]);
+
+  const navigate = useNavigate();
+  const handleSelectChange = (newValue) => {
+    if (newValue === 'redirectURL') {
+      navigate('/settings/currency');
+    }
+  };
+  const asyncList = () => {
+    return request.listAll({ entity: 'currency', options: { enabled: true } });
+  };
+  const { result, isLoading: fetchIsLoading, isSuccess } = useFetch(asyncList);
+  useEffect(() => {
+    isSuccess && setOptions(result);
+  }, [isSuccess]);
+
+  const optionsList = () => {
+    const list = [];
+
+    const value = 'redirectURL';
+    const label = `+ Add New Currency`;
+
+    list.push(...currencyOptions(selectOptions));
+    list.push({ value, label });
+
+    return list;
+  };
+  const langDirection=useSelector(selectLangDirection)
+
   return (
-    <div>
+    <div style={{direction:langDirection}}>
       <Form.Item
         label={translate('Currency')}
         name="default_currency_code"
@@ -20,16 +56,19 @@ export default function SettingsForm() {
       >
         <Select
           showSearch
+          loading={fetchIsLoading}
+          disabled={fetchIsLoading}
           filterOption={(input, option) =>
             (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
           }
           filterSort={(optionA, optionB) =>
             (optionA?.label ?? '').toLowerCase().startsWith((optionB?.label ?? '').toLowerCase())
           }
-          options={currencyOptions()}
+          options={optionsList()}
+          onChange={handleSelectChange}
         ></Select>
       </Form.Item>
-      <Form.Item
+      {/* <Form.Item
         label={translate('Currency Symbol')}
         name="currency_symbol"
         rules={[
@@ -38,7 +77,7 @@ export default function SettingsForm() {
           },
         ]}
       >
-        <Input />
+        <Input value={currency.currency_symbol} />
       </Form.Item>
 
       <Form.Item
@@ -99,7 +138,7 @@ export default function SettingsForm() {
         valuePropName="checked"
       >
         <Switch />
-      </Form.Item>
+      </Form.Item> */}
     </div>
   );
 }

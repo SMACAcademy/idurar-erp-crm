@@ -1,3 +1,6 @@
+const firebase = require("firebase/app"); 
+require("firebase/storage"); 
+const { firebaseConfig } = require('./utils/firebaseConfig');
 require('module-alias/register');
 const mongoose = require('mongoose');
 const { globSync } = require('glob');
@@ -15,8 +18,6 @@ require('dotenv').config({ path: '.env' });
 require('dotenv').config({ path: '.env.local' });
 
 mongoose.connect(process.env.DATABASE);
-
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 mongoose.connection.on('error', (error) => {
   console.log(

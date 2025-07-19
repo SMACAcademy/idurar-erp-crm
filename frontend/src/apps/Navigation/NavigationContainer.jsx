@@ -6,7 +6,6 @@ import { useAppContext } from '@/context/appContext';
 
 import useLanguage from '@/locale/useLanguage';
 import logoIcon from '@/style/images/logo-icon.svg';
-import logoText from '@/style/images/logo-text.svg';
 
 import useResponsive from '@/hooks/useResponsive';
 
@@ -27,6 +26,8 @@ import {
   WalletOutlined,
   ReconciliationOutlined,
 } from '@ant-design/icons';
+import { useSelector } from 'react-redux';
+import { selectLangDirection } from '@/redux/translate/selectors';
 
 const { Sider } = Layout;
 
@@ -59,7 +60,26 @@ function Sidebar({ collapsible, isMobile = false }) {
       icon: <CustomerServiceOutlined />,
       label: <Link to={'/customer'}>{translate('customers')}</Link>,
     },
-
+    {
+      key: 'people',
+      icon: <UserOutlined />,
+      label: <Link to={'/people'}>{translate('peoples')}</Link>,
+    },
+    {
+      key: 'company',
+      icon: <ShopOutlined />,
+      label: <Link to={'/company'}>{translate('companies')}</Link>,
+    },
+    {
+      key: 'lead',
+      icon: <FilterOutlined />,
+      label: <Link to={'/lead'}>{translate('leads')}</Link>,
+    },
+    {
+      key: 'offer',
+      icon: <FileOutlined />,
+      label: <Link to={'/offer'}>{translate('offers')}</Link>,
+    },
     {
       key: 'invoice',
       icon: <ContainerOutlined />,
@@ -68,7 +88,7 @@ function Sidebar({ collapsible, isMobile = false }) {
     {
       key: 'quote',
       icon: <FileSyncOutlined />,
-      label: <Link to={'/quote'}>{translate('quote')}</Link>,
+      label: <Link to={'/quote'}>{translate('proforma invoices')}</Link>,
     },
     {
       key: 'payment',
@@ -77,24 +97,67 @@ function Sidebar({ collapsible, isMobile = false }) {
     },
 
     {
-      key: 'paymentMode',
-      label: <Link to={'/payment/mode'}>{translate('payments_mode')}</Link>,
+      key: 'product',
+      icon: <TagOutlined />,
+      label: <Link to={'/product'}>{translate('products')}</Link>,
+    },
+    {
+      key: 'categoryproduct',
+      icon: <TagsOutlined />,
+      label: <Link to={'/category/product'}>{translate('products_category')}</Link>,
+    },
+    {
+      key: 'expenses',
       icon: <WalletOutlined />,
+      label: <Link to={'/expenses'}>{translate('expenses')}</Link>,
     },
     {
-      key: 'taxes',
-      label: <Link to={'/taxes'}>{translate('taxes')}</Link>,
-      icon: <ShopOutlined />,
-    },
-    {
-      key: 'generalSettings',
-      label: <Link to={'/settings'}>{translate('settings')}</Link>,
-      icon: <SettingOutlined />,
-    },
-    {
-      key: 'about',
-      label: <Link to={'/about'}>{translate('about')}</Link>,
+      key: 'expensesCategory',
       icon: <ReconciliationOutlined />,
+      label: <Link to={'/category/expenses'}>{translate('expenses_Category')}</Link>,
+    },
+    // {
+    //   key: 'employee',
+    //   icon: <UserOutlined />,
+    //   label: <Link to={'/employee'}>{translate('employee')}</Link>,
+    // },
+
+    {
+      label: translate('Settings'),
+      key: 'settings',
+      icon: <SettingOutlined />,
+      children: [
+        {
+          key: 'admin',
+          // icon: <TeamOutlined />,
+          label: <Link to={'/admin'}>{translate('admin')}</Link>,
+        },
+        {
+          key: 'generalSettings',
+          label: <Link to={'/settings'}>{translate('settings')}</Link>,
+        },
+        {
+          key: 'currency',
+          label: <Link to={'/settings/currency'}>{translate('currencies')}</Link>,
+        },
+
+        // {
+        //   key: 'emailTemplates',
+        //   label: <Link to={'/email'}>{translate('email_templates')}</Link>,
+        // },
+        {
+          key: 'paymentMode',
+          label: <Link to={'/payment/mode'}>{translate('payments_mode')}</Link>,
+        },
+        {
+          key: 'taxes',
+          label: <Link to={'/taxes'}>{translate('taxes')}</Link>,
+        },
+        {
+          key: 'about',
+          label: <Link to={'/about'}>{translate('about')}</Link>,
+        },
+      ],
     },
   ];
 
@@ -122,6 +185,7 @@ function Sidebar({ collapsible, isMobile = false }) {
     navMenu.collapse();
   };
 
+  const langDirection = useSelector(selectLangDirection)
   return (
     <Sider
       collapsible={collapsible}
@@ -132,14 +196,15 @@ function Sidebar({ collapsible, isMobile = false }) {
       style={{
         overflow: 'auto',
         height: '100vh',
-
-        position: isMobile ? 'absolute' : 'relative',
+        direction: langDirection,
+        position: isMobile ? "absolute" : "relative",
         bottom: '20px',
         ...(!isMobile && {
-          // border: 'none',
-          ['left']: '20px',
+          background: 'none',
+          border: 'none',
+          [langDirection === "rtl" ? "right" : "left"]: '20px',
           top: '20px',
-          // borderRadius: '8px',
+          borderRadius: '8px',
         }),
       }}
       theme={'light'}
@@ -149,21 +214,13 @@ function Sidebar({ collapsible, isMobile = false }) {
         onClick={() => navigate('/')}
         style={{
           cursor: 'pointer',
+          backgroundPosition: 'center',
+          backgroundSize: 'contain',
+          width: '200px',
+          height: '60px'
         }}
       >
-        <img src={logoIcon} alt="Logo" style={{ marginLeft: '-5px', height: '40px' }} />
-
-        {!showLogoApp && (
-          <img
-            src={logoText}
-            alt="Logo"
-            style={{
-              marginTop: '3px',
-              marginLeft: '10px',
-              height: '38px',
-            }}
-          />
-        )}
+        <img src={logoIcon} alt="Logo" style={{ marginLeft: '-5px', height: '120px' }} />
       </div>
       <Menu
         items={items}
@@ -171,6 +228,8 @@ function Sidebar({ collapsible, isMobile = false }) {
         theme={'light'}
         selectedKeys={[currentPath]}
         style={{
+          background: 'none',
+          border: 'none',
           width: 256,
         }}
       />
@@ -187,6 +246,7 @@ function MobileSidebar() {
     setVisible(false);
   };
 
+  const langDirection = useSelector(selectLangDirection)
   return (
     <>
       <Button
@@ -194,20 +254,28 @@ function MobileSidebar() {
         size="large"
         onClick={showDrawer}
         className="mobile-sidebar-btn"
-        style={{ ['marginLeft']: 25 }}
+
+
+        style={{ [langDirection === "rtl" ? "marginRight" : "marginLeft"]: 25 }}
       >
         <MenuOutlined style={{ fontSize: 18 }} />
       </Button>
       <Drawer
         width={250}
-        // style={{ backgroundColor: 'rgba(255, 255, 255, 1)' }}
-        placement={'left'}
+        contentWrapperStyle={{
+          boxShadow: 'none',
+        }}
+        style={{ backgroundColor: 'rgba(255, 255, 255, 0)' }}
+        placement={langDirection === "rtl" ? "right" : "left"}
+
         closable={false}
         onClose={onClose}
         open={visible}
+
       >
         <Sidebar collapsible={false} isMobile={true} />
       </Drawer>
+
     </>
   );
 }

@@ -35,6 +35,13 @@ const forgetPassword = async (req, res, { userModel }) => {
   const user = await User.findOne({ email: email, removed: false });
   const databasePassword = await UserPassword.findOne({ user: user._id, removed: false });
 
+  if (!user.enabled)
+    return res.status(409).json({
+      success: false,
+      result: null,
+      message: 'Your account is disabled, contact your account adminstrator',
+    });
+
   // console.log(user);
   if (!user)
     return res.status(404).json({
@@ -53,10 +60,10 @@ const forgetPassword = async (req, res, { userModel }) => {
   ).exec();
 
   const settings = useAppSettings();
-  const idurar_app_email = settings['idurar_app_email'];
-  const idurar_base_url = settings['idurar_base_url'];
+  const erp_app_email = settings['erp_app_email'];
+  const erp_base_url = settings['erp_base_url'];
 
-  const url = checkAndCorrectURL(idurar_base_url);
+  const url = checkAndCorrectURL(erp_base_url);
 
   const link = url + '/resetpassword/' + user._id + '/' + resetToken;
 
@@ -64,8 +71,8 @@ const forgetPassword = async (req, res, { userModel }) => {
     email,
     name: user.name,
     link,
-    subject: 'Reset your password | idurar',
-    idurar_app_email,
+    subject: 'Reset your password | erp',
+    erp_app_email,
     type: 'passwordVerfication',
   });
 

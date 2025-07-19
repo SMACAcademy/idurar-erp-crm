@@ -19,6 +19,8 @@ import calculate from '@/utils/calculate';
 import { useSelector } from 'react-redux';
 import SelectAsync from '@/components/SelectAsync';
 
+import SelectCurrency from '@/components/SelectCurrency';
+
 export default function InvoiceForm({ subTotal = 0, current = null }) {
   const { last_invoice_number } = useSelector(selectFinanceSettings);
 
@@ -62,6 +64,8 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
   useEffect(() => {
     addField.current.click();
   }, []);
+
+  const geminiApiKey = import.meta.env.VITE_GEMINI_API_KEY;
 
   return (
     <>
@@ -114,8 +118,10 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
             <InputNumber style={{ width: '100%' }} />
           </Form.Item>
         </Col>
-
-        <Col className="gutter-row" span={5}>
+        <Col className="gutter-row" span={6}>
+          <SelectCurrency />
+        </Col>
+        <Col className="gutter-row" span={4}>
           <Form.Item
             label={translate('status')}
             name="status"
@@ -194,7 +200,7 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
         {(fields, { add, remove }) => (
           <>
             {fields.map((field) => (
-              <ItemRow key={field.key} remove={remove} field={field} current={current}></ItemRow>
+              <ItemRow key={field.key} remove={remove} field={field} current={current} geminiApiKey={geminiApiKey} />
             ))}
             <Form.Item>
               <Button

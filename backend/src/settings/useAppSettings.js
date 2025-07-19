@@ -1,7 +1,7 @@
 const useAppSettings = () => {
   let settings = {};
-  settings['idurar_app_email'] = 'noreply@idurarapp.com';
-  settings['idurar_base_url'] = 'https://cloud.idurarapp.com';
+  settings['erp_app_email'] = 'harshy050902@gmail.com';
+  settings['erp_base_url'] = 'https://account-erp.vercel.app';
   return settings;
 };
 

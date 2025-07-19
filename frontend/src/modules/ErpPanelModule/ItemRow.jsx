@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Form, Input, InputNumber, Row, Col } from 'antd';
-
+import { Form, Input, InputNumber, Row, Col, Spin, message } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useMoney, useDate } from '@/settings';
 import calculate from '@/utils/calculate';
+import ModernButton from '@/components/Button/ModernButton';
 
-export default function ItemRow({ field, remove, current = null }) {
+export default function ItemRow({ field, remove, current = null, geminiApiKey }) {
   const [totalState, setTotal] = useState(undefined);
   const [price, setPrice] = useState(0);
   const [quantity, setQuantity] = useState(0);
+  const [summary, setSummary] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const money = useMoney();
   const updateQt = (value) => {
@@ -20,23 +22,15 @@ export default function ItemRow({ field, remove, current = null }) {
 
   useEffect(() => {
     if (current) {
-      // When it accesses the /payment/ endpoint,
-      // it receives an invoice.item instead of just item
-      // and breaks the code, but now we can check if items exists,
-      // and if it doesn't we can access invoice.items.
-
       const { items, invoice } = current;
-
       if (invoice) {
         const item = invoice[field.fieldKey];
-
         if (item) {
           setQuantity(item.quantity);
           setPrice(item.price);
         }
       } else {
         const item = items[field.fieldKey];
-
         if (item) {
           setQuantity(item.quantity);
           setPrice(item.price);
@@ -47,9 +41,33 @@ export default function ItemRow({ field, remove, current = null }) {
 
   useEffect(() => {
     const currentTotal = calculate.multiply(price, quantity);
-
     setTotal(currentTotal);
   }, [price, quantity]);
+
+  // Gemini summary handler
+  const handleGenerateSummary = async (desc) => {
+    if (!desc) {
+      message.warning('Please enter a description first.');
+      return;
+    }
+    setLoading(true);
+    setSummary('');
+    try {
+      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + geminiApiKey, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: `Summarize this for an invoice item: ${desc}` }] }]
+        })
+      });
+      const data = await response.json();
+      const summaryText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'No summary generated.';
+      setSummary(summaryText);
+    } catch (err) {
+      setSummary('Error generating summary.');
+    }
+    setLoading(false);
+  };
 
   return (
     <Row gutter={[12, 12]} style={{ position: 'relative' }}>
@@ -62,7 +80,7 @@ export default function ItemRow({ field, remove, current = null }) {
               message: 'Missing itemName name',
             },
             {
-              pattern: /^(?!\s*$)[\s\S]+$/, // Regular expression to allow spaces, alphanumeric, and special characters, but not just spaces
+              pattern: /^(?!\s*$)[\s\S]+$/,
               message: 'Item Name must contain alphanumeric or special characters',
             },
           ]}
@@ -72,8 +90,24 @@ export default function ItemRow({ field, remove, current = null }) {
       </Col>
       <Col className="gutter-row" span={7}>
         <Form.Item name={[field.name, 'description']}>
-          <Input placeholder="description Name" />
+          <Input placeholder="Description" id={`desc-${field.key}`} />
         </Form.Item>
+        <ModernButton
+          type="button"
+          style={{ marginTop: 4, marginBottom: 4 }}
+          onClick={async () => {
+            const descInput = document.getElementById(`desc-${field.key}`);
+            const desc = descInput ? descInput.value : '';
+            await handleGenerateSummary(desc);
+          }}
+        >
+          {loading ? <Spin size="small" /> : 'Generate Summary'}
+        </ModernButton>
+        {summary && (
+          <div style={{ marginTop: 4, color: '#2563eb', fontStyle: 'italic', fontSize: 13 }}>
+            {summary}
+          </div>
+        )}
       </Col>
       <Col className="gutter-row" span={3}>
         <Form.Item name={[field.name, 'quantity']} rules={[{ required: true }]}>

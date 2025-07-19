@@ -1,22 +1,29 @@
-import { useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { Avatar, Dropdown, Layout, Badge, Button } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Avatar, Dropdown, Layout } from 'antd';
 
 // import Notifications from '@/components/Notification';
 
-import { LogoutOutlined, ToolOutlined, UserOutlined } from '@ant-design/icons';
+import { SettingOutlined, LogoutOutlined, AppstoreOutlined, ToolOutlined, UserOutlined } from '@ant-design/icons';
 
 import { selectCurrentAdmin } from '@/redux/auth/selectors';
 
 import { FILE_BASE_URL } from '@/config/serverApiConfig';
 
 import useLanguage from '@/locale/useLanguage';
+import SelectLanguage from '@/components/SelectLanguage';
+import ChooseCurrency from '@/components/ChooseCurrency';
 
 import UpgradeButton from './UpgradeButton';
+import AppsButton from './AppsButton';
+import { selectLangDirection } from '@/redux/translate/selectors';
+import Header from '../../layout/Header';
 
 export default function HeaderContent() {
   const currentAdmin = useSelector(selectCurrentAdmin);
   const { Header } = Layout;
+
+  let location = useLocation();
 
   const translate = useLanguage();
 
@@ -84,13 +91,14 @@ export default function HeaderContent() {
     },
   ];
 
+  const langDirection=useSelector(selectLangDirection)
   return (
     <Header
       style={{
         padding: '20px',
-        background: '#ffffff',
+        background: '#f9fafc',
         display: 'flex',
-        flexDirection: 'row-reverse',
+        flexDirection: langDirection==="rtl"?"row":'row-reverse',
         justifyContent: 'flex-start',
         gap: ' 15px',
       }}
@@ -124,10 +132,14 @@ export default function HeaderContent() {
       {/* <AppsButton /> */}
 
       <UpgradeButton />
+
+      <SelectLanguage />
+
+      {location.pathname === '/' && <ChooseCurrency />}
     </Header>
   );
 }
 
 //  console.log(
-//    '🚀 Welcome to IDURAR ERP CRM! Did you know that we also offer commercial customization services? Contact us at hello@idurarapp.com for more information.'
+//    '🚀 Welcome to erp ERP CRM! Did you know that we also offer commercial customization services? Contact us at hello@erpapp.com for more information.'
 //  );

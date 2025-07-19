@@ -1,11 +1,71 @@
-@import './partials/rest.css';
-@import './partials/customAntd.css';
-@import './partials/layout.css';
-@import './partials/core.css';
+/* Modern CRM ERP Theme */
+body {
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: #f7f9fb;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
 
-@import './partials/auth.css';
-@import './partials/navigation.css';
-@import './partials/header.css';
-@import './partials/sidePanel.css';
-@import './partials/collapseBox.css';
-@import './partials/erp.css';
+h1, h2, h3, h4, h5, h6 {
+  color: #2563eb;
+  font-weight: 700;
+  margin-top: 0;
+}
+
+a {
+  color: #2563eb;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+button, .btn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+button:hover, .btn:hover {
+  background: #1e40af;
+}
+
+input, select, textarea {
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 0.5em;
+  font-size: 1em;
+  margin-bottom: 1em;
+  background: #fff;
+  color: #222;
+}
+
+.navbar, .header {
+  background: #2563eb;
+  color: #fff;
+  padding: 1em 2em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer {
+  background: #f59e42;
+  color: #fff;
+  text-align: center;
+  padding: 1em 0;
+  margin-top: 2em;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 2em;
+  margin-bottom: 2em;
+}

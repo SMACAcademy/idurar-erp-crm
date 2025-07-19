@@ -5,12 +5,12 @@ const fs = require('fs');
 const { generate: uniqueId } = require('shortid');
 
 const mongoose = require('mongoose');
-mongoose.connect(process.env.DATABASE);
+mongoose.connect(process.DATABASE);
 
 async function setupApp() {
   try {
-    const Admin = require('../models/coreModels/Admin');
-    const AdminPassword = require('../models/coreModels/AdminPassword');
+    const Admin = require('../models/appModels/coreModels/Admin');
+    const AdminPassword = require('../models/appModels/coreModels/AdminPassword');
     const newAdminPassword = new AdminPassword();
 
     const salt = uniqueId();
@@ -19,7 +19,7 @@ async function setupApp() {
 
     const demoAdmin = {
       email: 'admin@demo.com',
-      name: 'IDURAR',
+      name: 'erp',
       surname: 'Admin',
       enabled: true,
       role: 'owner',
@@ -36,7 +36,7 @@ async function setupApp() {
 
     console.log('👍 Admin created : Done!');
 
-    const Setting = require('../models/coreModels/Setting');
+    const Setting = require('../models/appModels/coreModels/Setting');
 
     const settingFiles = [];
 
@@ -51,8 +51,13 @@ async function setupApp() {
 
     console.log('👍 Settings created : Done!');
 
+    const Currency = require('../models/appModels/Currency');
+    const { currencyList } = require('../utils/currencyList');
     const PaymentMode = require('../models/appModels/PaymentMode');
     const Taxes = require('../models/appModels/Taxes');
+
+    await Currency.insertMany(currencyList);
+    console.log('👍 Currency created : Done!');
 
     await Taxes.insertMany([{ taxName: 'Tax 0%', taxValue: '0', isDefault: true }]);
     console.log('👍 Taxes created : Done!');

@@ -93,6 +93,18 @@ export const settingsAction = {
             JSON.stringify(dispatchSettingsData(data.result))
           );
 
+          // const { result: selectOptions } = request.listAll({
+          //   entity: 'currency',
+          //   options: { enabled: true },
+          // });
+
+          // const currency = selectOptions.find((x) => x.code === value);
+
+          // dispatch(
+          //   settingsAction.updateCurrency({
+          //     data: currency,
+          //   })
+          // );
           dispatch({
             type: actionTypes.REQUEST_SUCCESS,
             payload,
