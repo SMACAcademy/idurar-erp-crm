@@ -245,6 +245,12 @@ html
         color: #5d6975;
         
       }
+      .notice-invoice {
+        padding: 15px;
+        background: #f9f9f9;
+        border-left: 4px solid #52008c;
+        margin-top: 20px;
+      }
       .footer-invoice {
         margin-top:30px
         color: #5d6975;
@@ -319,6 +325,13 @@ html
         
       .col.col-24
           .space     
+          
+      if model.notes
+        .col.col-24
+          .notice-invoice
+            h3(style="margin-bottom: 5px;") #{translate('Notes')}
+            p.notice #{model.notes}
+
       footer.footer-invoice
         //- | Invoice was created on a computer and is valid without the signature and seal.
           
