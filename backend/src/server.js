@@ -14,7 +14,12 @@ if (major < 20) {
 require('dotenv').config({ path: '.env' });
 require('dotenv').config({ path: '.env.local' });
 
-mongoose.connect(process.env.DATABASE);
+mongoose.connect(process.env.DATABASE).then(() => {
+  console.log('MongoDB connection successful!');
+}).catch((error) => {
+  console.error('MongoDB connection error:', error.message);
+  process.exit(1);
+});
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
