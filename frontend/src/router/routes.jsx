@@ -29,6 +29,11 @@ const Profile = lazy(() => import('@/pages/Profile'));
 
 const About = lazy(() => import('@/pages/About'));
 
+const QueryList = lazy(() => import('@/pages/queries/List'));
+const QueryCreate = lazy(() => import('@/pages/queries/QueryCreate'));
+const QueryUpdate = lazy(() => import('@/pages/queries/QueryEdit'));
+const QueryRead = lazy(() => import('@/pages/queries/QueryRead'));
+
 let routes = {
   expense: [],
   default: [
@@ -72,6 +77,22 @@ let routes = {
     {
       path: '/invoice/pay/:id',
       element: <InvoiceRecordPayment />,
+    },
+    {
+      path: '/queries',
+      element: <QueryList />,
+    },
+    {
+      path: '/queries/create',
+      element: <QueryCreate />,
+    },
+    {
+      path: '/queries/read/:id',
+      element: <QueryRead />,
+    },
+    {
+      path: '/queries/update/:id',
+      element: <QueryUpdate />,
     },
     {
       path: '/quote',
