@@ -6,7 +6,6 @@
     <p align="center">
         <p>IDURAR ERP CRM | Simple To Use</p>
     </p>
-    
 
 ```
  Give a Star ⭐️ & Fork to this project ... Happy coding! 🤩`
@@ -17,8 +16,6 @@ IDURAR is Open Source ERP / CRM (Invoice / Quote / Accounting ) Based on Advance
 </div>
 
 **🚀 Self-hosted Entreprise Version** : [https://cloud.idurarapp.com](https://cloud.idurarapp.com)
-
-
 
 ## Features :
 
@@ -51,7 +48,6 @@ Based on Mern Stack (Node.js / Express.js / MongoDb / React.js ) 👨‍💻
 ## Free Open Source ERP / CRM App
 
 IDURAR is Open "Fair-Code" Source ERP / CRM (Invoice / Inventory / Accounting / HR) Based on Mern Stack (Node.js / Express.js / MongoDb / React.js ) with Ant Design (AntD) and Redux
-
 
 ## Getting started
 
@@ -89,7 +85,6 @@ IDURAR is Open "Fair-Code" Source ERP / CRM (Invoice / Inventory / Accounting / 
 
 7.[Questions](https://github.com/idurar/idurar-erp-crm/blob/master/CONTRIBUTING.md#questions)
 
-
 ## Show your support
 
 Dont forget to give a ⭐️ to this project ... Happy coding!
@@ -99,7 +94,3 @@ Dont forget to give a ⭐️ to this project ... Happy coding!
 ## License
 
 IDURAR is Free Open Source Released under the GNU Affero General Public License v3.0.
-
-Please refer the screen-shots folder
-
-video link: https://drive.google.com/file/d/17cnOeJuWr9ipz_h7Qk6Uy7ssSkFMH6gz/view?usp=drive_link
