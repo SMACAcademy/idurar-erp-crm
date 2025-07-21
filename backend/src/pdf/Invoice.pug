@@ -316,6 +316,12 @@ html
             tr
               td.grand.total(colspan='3')  #{translate('TOTAL')} 
               td.grand.total #{moneyFormatter({amount:model.total})}
+            if model.summary
+              tr
+                td(colspan='4')
+                  h4(style="margin-top: 30px; font-size: 13px") #{translate('Summary')}
+                  p(style="margin-top: 5px; font-size: 11px; line-height: 1.5") #{model.summary}
+
         
       .col.col-24
           .space     
