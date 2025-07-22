@@ -16,12 +16,21 @@ const routerApp = (entity, controller) => {
   router.route(`/${entity}/filter`).get(catchErrors(controller['filter']));
   router.route(`/${entity}/summary`).get(catchErrors(controller['summary']));
 
-  if (entity === 'invoice' || entity === 'quote' || entity === 'payment') {
+   if (entity === 'invoice' || entity === 'quote' || entity === 'payment') {
     router.route(`/${entity}/mail`).post(catchErrors(controller['mail']));
   }
 
   if (entity === 'quote') {
     router.route(`/${entity}/convert/:id`).get(catchErrors(controller['convert']));
+  }
+
+  if (entity === 'queries'){
+    router.route(`/${entity}`).get(catchErrors(controller['getQueries']));
+    router.route(`/${entity}`).post(catchErrors(controller['create']));
+    router.route(`/${entity}/:id`).get(catchErrors(controller['read']));
+    router.route(`/${entity}/:id`).put(catchErrors(controller['update']));
+    router.route(`/${entity}/:id/notes`).post(catchErrors(controller['createNote']));
+    router.route(`/${entity}/:id/notes/:noteId`).delete(catchErrors(controller['deleteNote']));
   }
 };
 
