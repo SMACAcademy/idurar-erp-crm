@@ -12,6 +12,7 @@ import useResponsive from '@/hooks/useResponsive';
 
 import {
   SettingOutlined,
+  QuestionCircleOutlined,
   CustomerServiceOutlined,
   ContainerOutlined,
   FileSyncOutlined,
@@ -90,6 +91,11 @@ function Sidebar({ collapsible, isMobile = false }) {
       key: 'generalSettings',
       label: <Link to={'/settings'}>{translate('settings')}</Link>,
       icon: <SettingOutlined />,
+    },
+    {
+      key: 'queries',
+      icon: <QuestionCircleOutlined />,
+      label: <Link to={'/queries'}>{translate('queries')}</Link>,
     },
     {
       key: 'about',

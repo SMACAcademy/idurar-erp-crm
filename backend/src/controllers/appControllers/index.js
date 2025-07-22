@@ -25,8 +25,8 @@ const appControllers = () => {
       throw new Error(err.message);
     }
   });
-
-  routesList.forEach(({ modelName, controllerName }) => {
+  
+   routesList.forEach(({ modelName, controllerName }) => {
     if (!hasCustomControllers.includes(controllerName)) {
       controllers[controllerName] = createCRUDController(modelName);
     }

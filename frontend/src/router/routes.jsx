@@ -28,6 +28,10 @@ const Taxes = lazy(() => import('@/pages/Taxes'));
 const Profile = lazy(() => import('@/pages/Profile'));
 
 const About = lazy(() => import('@/pages/About'));
+const Queries = lazy(() => import('@/pages/Queries'));
+const QueryCreate = lazy(() => import('@/pages/Queries/QueryCreate'));
+const QueryRead = lazy(() => import('@/pages/Queries/QueryRead'));
+const QueryUpdate = lazy(() => import('@/pages/Queries/QueryUpdate'));
 
 let routes = {
   expense: [],
@@ -89,7 +93,7 @@ let routes = {
       path: '/quote/update/:id',
       element: <QuoteUpdate />,
     },
-    {
+{
       path: '/payment',
       element: <Payment />,
     },
@@ -109,6 +113,22 @@ let routes = {
     {
       path: '/settings/edit/:settingsKey',
       element: <Settings />,
+    },
+    {
+      path: '/queries',
+      element: <Queries />,
+    },
+    {
+      path: '/queries/create',
+      element: <QueryCreate />,
+    },
+    {
+      path: '/queries/read/:id',
+      element: <QueryRead />,
+    },
+    {
+      path: '/queries/update/:id',
+      element: <QueryUpdate />,
     },
     {
       path: '/payment/mode',
