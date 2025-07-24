@@ -37,7 +37,20 @@ const paginatedList = async (Model, req, res) => {
   });
   // Resolving both promises
   const [result, count] = await Promise.all([resultsPromise, countPromise]);
+  let modifiedResult = result;
 
+  if (Model.modelName === 'Query') {
+    modifiedResult = result.map((item) => {
+      const itemObj = item.toObject();
+      return {
+        ...itemObj,
+        client: {
+          _id: itemObj.client?._id || '',
+          name: itemObj.client?.name || '-',
+        }
+      };
+    });
+  }
   // Calculating total pages
   const pages = Math.ceil(count / limit);
 
@@ -46,7 +59,7 @@ const paginatedList = async (Model, req, res) => {
   if (count > 0) {
     return res.status(200).json({
       success: true,
-      result,
+      result: modifiedResult,
       pagination,
       message: 'Successfully found all documents',
     });
