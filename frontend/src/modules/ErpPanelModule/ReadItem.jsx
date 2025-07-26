@@ -23,6 +23,7 @@ import { DOWNLOAD_BASE_URL } from '@/config/serverApiConfig';
 import { useMoney, useDate } from '@/settings';
 import useMail from '@/hooks/useMail';
 import { useNavigate } from 'react-router-dom';
+import { request } from '@/request';
 
 const Item = ({ item, currentErp }) => {
   const { moneyFormatter } = useMoney();
@@ -98,7 +99,8 @@ export default function ReadItem({ config, selectedItem }) {
   const [itemslist, setItemsList] = useState([]);
   const [currentErp, setCurrentErp] = useState(selectedItem ?? resetErp);
   const [client, setClient] = useState({});
-
+  const [summary, setSummary] = useState()
+  const [generating, setGenerating] = useState()
   useEffect(() => {
     if (currentResult) {
       const { items, invoice, ...others } = currentResult;
@@ -122,6 +124,23 @@ export default function ReadItem({ config, selectedItem }) {
       setClient(currentErp.client);
     }
   }, [currentErp]);
+
+  const handleSummary = async (id) => {
+    if (!id) {
+      console.error("Invoice ID is missing.");
+      return;
+    }
+    const notes = itemslist.map((item) => item.itemNote).filter(Boolean);
+    if (notes.length === 0) {
+      setSummary('No notes available to summarize.');
+      return;
+    }
+    setGenerating(true);
+    const result = await request.generateInvoiceSummary({ id });
+    setSummary(result.summary);
+    setGenerating(false);
+  };
+
 
   return (
     <>
@@ -277,8 +296,51 @@ export default function ReadItem({ config, selectedItem }) {
         <Divider />
       </Row>
       {itemslist.map((item) => (
-        <Item key={item._id} item={item} currentErp={currentErp}></Item>
+        <div key={item._id}>
+          <Item item={item} currentErp={currentErp} />
+          {item.itemNote && (
+            <Row>
+              <Col span={24}>
+                <p
+                  style={{
+                    fontStyle: 'italic',
+                    color: '#666',
+                    marginTop: -10,
+                    marginBottom: 10,
+                    marginLeft: 8,
+                  }}
+                >
+                  📝 Note: {item.itemNote}
+                </p>
+              </Col>
+            </Row>
+          )}
+        </div>
       ))}
+
+      <Button
+        type="primary"
+        onClick={() => handleSummary(currentErp._id)}
+        loading={generating}
+        icon={<FilePdfOutlined />}
+        style={{ marginTop: 20 }}
+      >
+        {translate('Generate Summary')}
+      </Button>
+
+      {summary && (
+        <div
+          style={{
+            marginTop: 20,
+            padding: 16,
+            background: '#f6f9fc',
+            borderLeft: '4px solid #007bff',
+          }}
+        >
+          <strong>{translate('Summary')}:</strong>
+          <p style={{ marginTop: 8 }}>{summary}</p>
+        </div>
+      )}
       <div
         style={{
           width: '300px',

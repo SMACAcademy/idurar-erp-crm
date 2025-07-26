@@ -8,6 +8,7 @@ const update = require('./update');
 const remove = require('./remove');
 const paginatedList = require('./paginatedList');
 const read = require('./read');
+const generateAIInvoiceSummary = require('./invoiceNoteSummary');
 
 methods.mail = sendMail;
 methods.create = create;
@@ -16,5 +17,6 @@ methods.delete = remove;
 methods.summary = summary;
 methods.list = paginatedList;
 methods.read = read;
+methods.generateAIInvoiceSummary = generateAIInvoiceSummary;
 
 module.exports = methods;

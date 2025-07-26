@@ -20,9 +20,19 @@ const routerApp = (entity, controller) => {
     router.route(`/${entity}/mail`).post(catchErrors(controller['mail']));
   }
 
+  if (entity === 'invoice') {
+    router.route(`/${entity}/:id/summary`).post(catchErrors(controller['generateAIInvoiceSummary']));
+  }
+
   if (entity === 'quote') {
     router.route(`/${entity}/convert/:id`).get(catchErrors(controller['convert']));
   }
+
+  if (entity === 'query') {
+    router.route(`/${entity}/:id/notes`).post(catchErrors(controller['addNote']));
+    router.route(`/${entity}/:id/notes/:noteId`).delete(catchErrors(controller['deleteNote']));
+  }
+  
 };
 
 routesList.forEach(({ entity, controllerName }) => {

@@ -298,5 +298,18 @@ const request = {
       return errorHandler(error);
     }
   },
+  generateInvoiceSummary: async ({ id }) => {
+    try {
+      includeToken();
+      const response = await axios.post(`/invoice/${id}/summary`);
+      successHandler(response, {
+        notifyOnSuccess: true,
+        notifyOnFailed: true,
+      });
+      return response.data;
+    } catch (error) {
+      return errorHandler(error);
+    }
+  },
 };
 export default request;
