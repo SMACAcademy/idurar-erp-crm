@@ -1,0 +1,235 @@
+{
+	"info": {
+		"_postman_id": "1d5f7c4a-1d00-405f-91d7-1e9ed7b84696",
+		"name": "Idurar-CRM API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39446907"
+	},
+	"item": [
+		{
+			"name": "Create a query",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Document should be created\", function () {\r",
+							"  const jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData.success).to.eql(true);\r",
+							"  pm.expect(jsonData.result).to.have.property(\"_id\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"client\": \"687b6254f974643f3a13ff61\",\r\n    \"description\": \"test\",\r\n    \"status\":\"open\",\r\n    \"resolution\": \"This is a test resolution\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/query/",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"query",
+						""
+					]
+				},
+				"description": "## API Endpoint: Create Query\n\nThis endpoint allows clients to submit a query to the system. It is designed to accept a JSON payload containing details about the query, including client identification, a description, the current status, and a resolution.\n\n### Request\n\n**Method:** POST  \n**URL:** `{{baseURL}}/api/query/`\n\n**Request Body:**  \nThe request body must be in JSON format and include the following parameters:\n\n- **client** (string): A unique identifier for the client making the request.\n    \n- **description** (string): A brief description of the query.\n    \n- **status** (string): The current status of the query (e.g., \"open\").\n    \n- **resolution** (string): The resolution or outcome related to the query.\n    \n\n**Example Request Body:**\n\n``` json\n{\n  \"client\": \"687b6254f974643f3a13ff61\",\n  \"description\": \"test\",\n  \"status\": \"open\",\n  \"resolution\": \"This is a test resolution\"\n}\n\n ```\n\n### Response\n\nUpon successful execution, the server responds with a JSON object. However, in the last execution, the response indicated a `401 Unauthorized` status, which suggests that the request was not authenticated properly. The response structure is as follows:\n\n- **success** (boolean): Indicates whether the request was successful.\n    \n- **result** (object|null): Contains the result of the query if successful; otherwise, it is null.\n    \n- **message** (string): A message providing additional information about the request.\n    \n- **jwtExpired** (boolean): Indicates if the JSON Web Token used for authentication has expired.\n    \n\n**Example Response:**\n\n``` json\n{\n  \"success\": true,\n  \"result\": null,\n  \"message\": \"\",\n  \"jwtExpired\": true\n}\n\n ```\n\n### Notes\n\n- Ensure that the client identifier is valid and that the request is properly authenticated to avoid `401 Unauthorized` errors.\n    \n- If the JWT token has expired, refresh the token and retry the request."
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch paginated list",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response has data\", function () {\r",
+							"  const jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData).to.have.property('items');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/query/list?page=1&items=10",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"query",
+						"list"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "items",
+							"value": "10"
+						}
+					]
+				},
+				"description": "### API Endpoint: Retrieve Query List\n\nThis endpoint allows users to fetch a list of queries based on pagination parameters. It is primarily used to retrieve a subset of query data, which can be useful for displaying results in a paginated format.\n\n#### Request Format\n\n- **Method**: GET\n    \n- **URL**: `{{baseURL}}/api/query/list`\n    \n- **Query Parameters**:\n    \n    - `page` (integer): The page number to retrieve. This parameter is essential for pagination.\n        \n    - `items` (integer): The number of items to return per page. This controls the size of the dataset returned.\n        \n\n#### Example Request\n\n```\nGET {{baseURL}}/api/query/list?page=1&items=10\n\n ```\n\n#### Response Structure\n\nThe response from this endpoint is returned in JSON format. The following keys are included in the response:\n\n- `success` (boolean): Indicates whether the request was successful.\n    \n- `result` (object or null): Contains the list of queries if the request was successful; otherwise, it will be null.\n    \n- `message` (string): A message providing additional context about the request's outcome.\n    \n- `jwtExpired` (boolean): Indicates if the JWT token used for authentication has expired.\n    \n\n#### Example Response\n\n``` json\n{\n  \"success\": true,\n  \"result\": null,\n  \"message\": \"\",\n  \"jwtExpired\": true\n}\n\n ```\n\n#### Status Codes\n\n- **200 OK**: The request was successful, and the result is returned.\n    \n- **401 Unauthorized**: The request failed due to authentication issues, such as an expired JWT token.\n    \n\nMake sure to handle the authentication properly to avoid receiving a 401 status code."
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch a single query",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Should return a single query document\", function () {\r",
+							"  const jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData.result).to.have.property(\"_id\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/query/:id",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"query",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "687b6254f974643f3a13ff61"
+						}
+					]
+				},
+				"description": "### API Endpoint: Retrieve Query by ID\n\n**Method:** GET  \n**URL:** `{{baseURL}}/api/query/:id`\n\n#### Purpose\n\nThis endpoint is used to retrieve a specific query based on the provided unique identifier (`id`). It is typically employed to fetch details about a query that has been previously executed or stored in the system.\n\n#### Request Parameters\n\n- **Path Parameter:**\n    \n    - `id` (string): The unique identifier of the query you wish to retrieve. This parameter is required.\n        \n\n#### Response Structure\n\nThe response from this endpoint will be in JSON format. The expected structure is as follows:\n\n- **success** (boolean): Indicates whether the request was successful.\n    \n- **result** (object or null): Contains the details of the query if found; otherwise, it will be null.\n    \n- **message** (string): A message providing additional context about the request. This may be empty.\n    \n- **jwtExpired** (boolean): Indicates whether the JSON Web Token (JWT) used for authentication has expired.\n    \n\n#### Example Response\n\n``` json\n{\n  \"success\": true,\n  \"result\": null,\n  \"message\": \"\",\n  \"jwtExpired\": true\n}\n\n ```\n\n#### Notes\n\n- A `401 Unauthorized` status indicates that the request requires user authentication, and it may suggest that the JWT token has expired.\n    \n- Ensure that you are authenticated and have a valid token when making this request to avoid unauthorized access."
+			},
+			"response": []
+		},
+		{
+			"name": "Update a query",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"  pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Query document should be updated\", function () {\r",
+							"  const jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData.success).to.eql(true);\r",
+							"  pm.expect(jsonData.result).to.have.property(\"updatedAt\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/query/:id",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"query",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "687b6254f974643f3a13ff61"
+						}
+					]
+				},
+				"description": "## PATCH Request to Update Query\n\nThis endpoint allows you to update a specific query identified by its unique `id`. It is typically used to modify existing query parameters or settings.\n\n### Request Format\n\n- **URL**: `{{baseURL}}/api/query/:id`\n    \n- **Method**: PATCH\n    \n\n### Request Body\n\nThe request body should be formatted as JSON and may include the following parameters (the exact parameters depend on the specific query being updated):\n\n- `parameter1`: (string) Description of parameter1.\n    \n- `parameter2`: (string) Description of parameter2.\n    \n- `parameter3`: (string) Description of parameter3.\n    \n\n### Response Structure\n\nThe server will respond with a JSON object that includes the following fields:\n\n- `success`: (boolean) Indicates whether the request was successful.\n    \n- `result`: (object|null) Contains the updated query details if successful; otherwise, it will be `null`.\n    \n- `message`: (string) A message that provides additional context about the request's outcome.\n    \n- `jwtExpired`: (boolean) Indicates whether the JWT token used for authentication has expired.\n    \n\n### Example Response\n\n``` json\n{\n  \"success\": true,\n  \"result\": null,\n  \"message\": \"\",\n  \"jwtExpired\": true\n}\n\n ```\n\n### Status Codes\n\n- **401 Unauthorized**: This status indicates that the request was not authorized, possibly due to an expired JWT token. Ensure that you are authenticated and that your token is valid before making this request."
+			},
+			"response": []
+		},
+		{
+			"name": "Soft delete or block",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/query/:id",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"query",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "687b6254f974643f3a13ff61"
+						}
+					]
+				},
+				"description": "## DELETE Request to Remove a Query\n\nThis endpoint is used to delete a specific query identified by its unique `id`. It is essential for managing and maintaining the list of queries in the system, allowing users to remove queries that are no longer needed.\n\n### Request Format\n\n- **Method**: DELETE\n    \n- **Endpoint**: `{{baseURL}}/api/query/:id`\n    \n- **Path Parameter**:\n    \n    - `id` (string): The unique identifier of the query to be deleted.\n        \n\n### Response Structure\n\nThe response will return a JSON object containing the following fields:\n\n- `success` (boolean): Indicates whether the deletion operation was successful.\n    \n- `result` (null): This field will typically hold the result of the operation, but in this case, it is null as the response is primarily focused on the success status.\n    \n- `message` (string): A message providing additional context about the operation. It may be empty in some cases.\n    \n- `jwtExpired` (boolean): Indicates whether the JSON Web Token (JWT) used for authentication has expired, which may affect the success of the request.\n    \n\n### Example Response\n\n``` json\n{\n  \"success\": true,\n  \"result\": null,\n  \"message\": \"\",\n  \"jwtExpired\": true\n}\n\n ```\n\n### Notes\n\n- A `401 Unauthorized` status indicates that the request could not be authenticated, often due to an expired JWT. Ensure that the token is valid before making the request."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:8888",
+			"type": "default"
+		}
+	]
+}

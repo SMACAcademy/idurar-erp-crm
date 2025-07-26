@@ -5,7 +5,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { useMoney, useDate } from '@/settings';
 import calculate from '@/utils/calculate';
 
-export default function ItemRow({ field, remove, current = null }) {
+export default function ItemRow({ field, remove, current = null, showNote = false }) {
   const [totalState, setTotal] = useState(undefined);
   const [price, setPrice] = useState(0);
   const [quantity, setQuantity] = useState(0);
@@ -110,7 +110,14 @@ export default function ItemRow({ field, remove, current = null }) {
           </Form.Item>
         </Form.Item>
       </Col>
-
+      {showNote && (
+        <Form.Item
+          name={[field.name, 'itemNote']}
+          style={{ marginTop: 4 }}
+        >
+          <Input placeholder="Note for this item" />
+        </Form.Item>
+      )}
       <div style={{ position: 'absolute', right: '-20px', top: ' 5px' }}>
         <DeleteOutlined onClick={() => remove(field.name)} />
       </div>

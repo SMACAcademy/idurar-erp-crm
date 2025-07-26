@@ -196,9 +196,17 @@ export function dataForTable({ fields, translate, moneyFormatter, dateFormat }) 
     const type = field.type;
 
     if (!field.disableForTable) {
-      Object.keys(component).includes(type)
-        ? columns.push(component[type])
-        : columns.push(defaultComponent);
+      if (Object.keys(component).includes(type)) {
+        if (field.render) {
+          component[type].render = field.render;
+        }
+        columns.push(component[type]);
+      } else {
+        if (field.render) {
+          defaultComponent.render = field.render;
+        }
+        columns.push(defaultComponent);
+      }
     }
   });
 

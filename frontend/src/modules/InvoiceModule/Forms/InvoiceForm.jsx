@@ -194,7 +194,7 @@ function LoadInvoiceForm({ subTotal = 0, current = null }) {
         {(fields, { add, remove }) => (
           <>
             {fields.map((field) => (
-              <ItemRow key={field.key} remove={remove} field={field} current={current}></ItemRow>
+              <ItemRow key={field.key} remove={remove} field={field} current={current} showNote />
             ))}
             <Form.Item>
               <Button
