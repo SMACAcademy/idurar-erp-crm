@@ -14,7 +14,8 @@ if (major < 20) {
 require('dotenv').config({ path: '.env' });
 require('dotenv').config({ path: '.env.local' });
 
-mongoose.connect(process.env.MONGODB_URI);
+const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/idurar_db';
+mongoose.connect(mongoUri);
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 

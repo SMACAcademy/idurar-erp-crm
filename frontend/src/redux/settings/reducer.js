@@ -12,6 +12,7 @@ const INITIAL_STATE = {
   result: INITIAL_SETTINGS_STATE,
   isLoading: false,
   isSuccess: false,
+  isError: false,
 };
 
 const settingsReducer = (state = INITIAL_STATE, action) => {
@@ -29,6 +30,7 @@ const settingsReducer = (state = INITIAL_STATE, action) => {
         ...state,
         isLoading: false,
         isSuccess: false,
+        isError: true,
       };
 
     case actionTypes.UPDATE_CURRENCY:
@@ -39,6 +41,7 @@ const settingsReducer = (state = INITIAL_STATE, action) => {
         },
         isLoading: false,
         isSuccess: true,
+        isError: false,
       };
 
     case actionTypes.REQUEST_SUCCESS:
@@ -46,6 +49,7 @@ const settingsReducer = (state = INITIAL_STATE, action) => {
         result: payload,
         isLoading: false,
         isSuccess: true,
+        isError: false,
       };
     default:
       return state;

@@ -1,5 +1,4 @@
-import { useLayoutEffect } from 'react';
-import { useEffect } from 'react';
+import { useLayoutEffect, useEffect, useState } from 'react';
 import { selectAppSettings } from '@/redux/settings/selectors';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -24,6 +23,7 @@ import storePersist from '@/redux/storePersist';
 
 export default function ErpCrmApp() {
   const { Content } = Layout;
+  const [timeoutReached, setTimeoutReached] = useState(false);
 
   // const { state: stateApp, appContextAction } = useAppContext();
   // // const { app } = appContextAction;
@@ -34,12 +34,27 @@ export default function ErpCrmApp() {
   const dispatch = useDispatch();
 
   useLayoutEffect(() => {
-    dispatch(settingsAction.list({ entity: 'setting' }));
+    console.log('🔧 ErpApp: Starting settings load...');
+    
+    // Try to load settings, but don't block the app if it fails
+    dispatch(settingsAction.list({ entity: 'setting' }))
+      .catch((error) => {
+        console.error('❌ ErpApp: Settings load failed:', error);
+        // Don't throw, just log the error
+      });
+    
+    // Set a timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      console.log('⏰ ErpApp: Settings timeout reached, proceeding anyway');
+      setTimeoutReached(true);
+    }, 5000); // Reduced to 5 seconds timeout
+
+    return () => clearTimeout(timeout);
   }, []);
 
   // const appSettings = useSelector(selectAppSettings);
 
-  const { isSuccess: settingIsloaded } = useSelector(selectSettings);
+  const { isSuccess: settingIsloaded, isLoading: settingIsLoading, isError: settingIsError } = useSelector(selectSettings);
 
   // useEffect(() => {
   //   const { loadDefaultLang } = storePersist.get('firstVisit');
@@ -48,7 +63,8 @@ export default function ErpCrmApp() {
   //   }
   // }, [appSettings]);
 
-  if (settingIsloaded)
+  // If settings are loaded successfully, if there's an error, or if timeout is reached (to prevent infinite loading)
+  if (settingIsloaded || settingIsError || timeoutReached)
     return (
       <Layout hasSider>
         <Navigation />

@@ -1,7 +1,5 @@
 import { lazy, useEffect } from 'react';
 
-import {} from 'react-router-dom';
-import {} from 'react-router-dom';
 import { Navigate, useLocation, useRoutes } from 'react-router-dom';
 import { useAppContext } from '@/context/appContext';
 

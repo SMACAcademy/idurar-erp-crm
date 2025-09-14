@@ -12,7 +12,7 @@ const corePublicRouter = require('./routes/coreRoutes/corePublicRouter');
 const adminAuth = require('./controllers/coreControllers/adminAuth');
 
 const errorHandlers = require('./handlers/errorHandlers');
-const erpApiRouter = require('./routes/appRoutes/appApi');
+const erpApiRouter = require('./routes/appRoutes/mainAppApi');
 
 const fileUpload = require('express-fileupload');
 // create our Express app

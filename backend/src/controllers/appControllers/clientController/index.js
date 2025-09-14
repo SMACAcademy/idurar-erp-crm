@@ -4,10 +4,12 @@ const createCRUDController = require('@/controllers/middlewaresControllers/creat
 const summary = require('./summary');
 
 function modelController() {
-  const Model = mongoose.model('Client');
   const methods = createCRUDController('Client');
 
-  methods.summary = (req, res) => summary(Model, req, res);
+  methods.summary = (req, res) => {
+    const Model = mongoose.model('Client');
+    return summary(Model, req, res);
+  };
   return methods;
 }
 

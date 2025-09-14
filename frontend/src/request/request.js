@@ -14,13 +14,20 @@ function findKeyByPrefix(object, prefix) {
 }
 
 function includeToken() {
-  axios.defaults.baseURL = API_BASE_URL;
-
-  axios.defaults.withCredentials = true;
-  const auth = storePersist.get('auth');
-
-  if (auth) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${auth.current.token}`;
+  try {
+    axios.defaults.baseURL = API_BASE_URL;
+    axios.defaults.withCredentials = true;
+    
+    const auth = storePersist.get('auth');
+    if (auth && auth.current && auth.current.token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${auth.current.token}`;
+    } else {
+      // Remove authorization header if no valid token
+      delete axios.defaults.headers.common['Authorization'];
+    }
+  } catch (error) {
+    console.error('❌ Error setting up request headers:', error);
+    // Continue without auth token
   }
 }
 
