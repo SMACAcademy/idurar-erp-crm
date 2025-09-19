@@ -1,12 +1,22 @@
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import CrudModule from '@/modules/CrudModule/CrudModule';
 import DynamicForm from '@/forms/DynamicForm';
 import { fields } from './config';
 
-import useLanguage from '@/locale/useLanguage';    
+import useLanguage from '@/locale/useLanguage';
+import { crud } from '@/redux/crud/actions';
 
 export default function Customer() {
   const translate = useLanguage();
+  const dispatch = useDispatch();
   const entity = 'client';
+
+  // Ensure clients list API is triggered on page load
+  useEffect(() => {
+    dispatch(crud.list({ entity }));
+  }, [dispatch]);
+
   const searchConfig = {
     displayLabels: ['name'],
     searchFields: 'name',

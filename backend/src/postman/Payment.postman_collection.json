@@ -1,0 +1,101 @@
+{
+  "info": {
+    "name": "Payment Public API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "7a2f3f4d-0000-4000-9000-aaaaaaaaaaaa"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "createdBy", "value": "" },
+    { "key": "clientId", "value": "" },
+    { "key": "invoiceId", "value": "" },
+    { "key": "paymentModeId", "value": "" },
+    { "key": "paymentId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "GET /api/payment/list",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/payment/list?items=10&page=1"
+      }
+    },
+    {
+      "name": "GET /api/payment/list/all",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/payment/list/all"
+      }
+    },
+    {
+      "name": "GET /api/payment/search",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/payment/search?q=pay&fields=ref,description"
+      }
+    },
+    {
+      "name": "GET /api/payment/filter",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/payment/filter?filter=client&equal={{clientId}}"
+      }
+    },
+    {
+      "name": "GET /api/payment/summary",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/payment/summary?type=month"
+      }
+    },
+    {
+      "name": "GET /api/payment/read/:id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/payment/read/{{paymentId}}"
+      }
+    },
+    {
+      "name": "POST /api/payment/create",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"number\": 1007,\n  \"client\": \"{{clientId}}\",\n  \"invoice\": \"{{invoiceId}}\",\n  \"date\": \"2025-09-19T12:00:00.000Z\",\n  \"amount\": 250,\n  \"currency\": \"USD\",\n  \"paymentMode\": \"{{paymentModeId}}\",\n  \"ref\": \"TXN-POSTMAN-001\",\n  \"description\": \"Partial settlement via Postman\",\n  \"createdBy\": \"{{createdBy}}\"\n}"
+        },
+        "url": "{{baseUrl}}/api/payment/create"
+      }
+    },
+    {
+      "name": "PUT /api/payment/update/:id",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"number\": 1008,\n  \"date\": \"2025-09-20T12:00:00.000Z\",\n  \"amount\": 300,\n  \"paymentMode\": \"{{paymentModeId}}\",\n  \"ref\": \"TXN-POSTMAN-001-UPDATED\",\n  \"description\": \"Updated via Postman\"\n}"
+        },
+        "url": "{{baseUrl}}/api/payment/update/{{paymentId}}"
+      }
+    },
+    {
+      "name": "DELETE /api/payment/delete/:id",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "{{baseUrl}}/api/payment/delete/{{paymentId}}"
+      }
+    }
+  ]
+}

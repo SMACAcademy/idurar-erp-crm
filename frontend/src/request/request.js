@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_BASE_URL } from '@/config/serverApiConfig';
+import { API_BASE_URL, BASE_URL } from '@/config/serverApiConfig';
 
 import errorHandler from './errorHandler';
 import successHandler from './successHandler';
@@ -31,6 +31,14 @@ function includeToken() {
   }
 }
 
+const saveLocal = (key, data) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(data));
+  } catch (e) {
+    console.warn('localStorage set failed', e);
+  }
+};
+
 const request = {
   create: async ({ entity, jsonData }) => {
     try {
@@ -40,6 +48,9 @@ const request = {
         notifyOnSuccess: true,
         notifyOnFailed: true,
       });
+      if (entity === 'client') {
+        saveLocal('client:create:response', response.data);
+      }
       return response.data;
     } catch (error) {
       return errorHandler(error);
@@ -57,6 +68,9 @@ const request = {
         notifyOnSuccess: true,
         notifyOnFailed: true,
       });
+      if (entity === 'client') {
+        saveLocal('client:create:response', response.data);
+      }
       return response.data;
     } catch (error) {
       return errorHandler(error);
@@ -162,6 +176,48 @@ const request = {
   list: async ({ entity, options = {} }) => {
     try {
       includeToken();
+
+      // For clients, use the public API endpoint (returns all clients)
+      if (entity === 'client') {
+        const response = await axios.get(BASE_URL + 'public-api/clients/all');
+        successHandler(response, {
+          notifyOnSuccess: false,
+          notifyOnFailed: false,
+        });
+        return response.data;
+      }
+
+      // For payments, call the public "list all" (no payload, maps to /api/payment/list/all)
+      if (entity === 'payment') {
+        const response = await axios.get('payment/list/all');
+        successHandler(response, {
+          notifyOnSuccess: false,
+          notifyOnFailed: false,
+        });
+        return response.data;
+      }
+
+      // For payment modes, call list/all (maps to /api/paymentMode/list/all)
+      if (entity === 'paymentMode') {
+        const response = await axios.get('paymentMode/list/all');
+        successHandler(response, {
+          notifyOnSuccess: false,
+          notifyOnFailed: false,
+        });
+        return response.data;
+      }
+
+      // For taxes, call list/all (maps to /api/taxes/list/all)
+      if (entity === 'taxes') {
+        const response = await axios.get('taxes/list/all');
+        successHandler(response, {
+          notifyOnSuccess: false,
+          notifyOnFailed: false,
+        });
+        return response.data;
+      }
+
+      // Default behavior for other entities (GET with query string)
       let query = '?';
       for (var key in options) {
         query += key + '=' + options[key] + '&';
@@ -205,6 +261,10 @@ const request = {
       includeToken();
       const response = await axios.post(entity, jsonData);
 
+      // If a direct endpoint string like 'client/create' is posted, persist the response
+      if (typeof entity === 'string' && /(?:^|\/)client\/create$/.test(entity)) {
+        saveLocal('client:create:response', response.data);
+      }
       return response.data;
     } catch (error) {
       return errorHandler(error);

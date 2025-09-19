@@ -48,15 +48,15 @@ const QueryPage = () => {
   const [form] = Form.useForm();
   const [noteForm] = Form.useForm();
 
-  const fetchClients = async () => {
-    try {
-      const response = await axios.get('/client'); // Adjust endpoint if needed
-      setClients(response.data.result || []);
-    } catch (error) {
-      message.error('Failed to fetch clients');
-      console.error('Error fetching clients:', error);
-    }
-  };
+  // const fetchClients = async () => {
+  //   try {
+  //     const response = await axios.get('/client'); // Adjust endpoint if needed
+  //     setClients(response.data.result || []);
+  //   } catch (error) {
+  //     message.error('Failed to fetch clients');
+  //     console.error('Error fetching clients:', error);
+  //   }
+  // };
 
   const fetchQueries = async (page = 1, limit = 10, status = statusFilter) => {
     setLoading(true);
@@ -78,10 +78,10 @@ const QueryPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchClients();
-    fetchQueries();
-  }, []);
+  // useEffect(() => {
+  //   fetchClients();
+  //   fetchQueries();
+  // }, []);
 
   useEffect(() => {
     fetchQueries(1, pagination.pageSize, statusFilter);

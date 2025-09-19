@@ -75,4 +75,31 @@ const adminAuth = require('../../controllers/coreControllers/adminAuth');
 // Invoice notes summary route
 router.get('/invoice/:id/generateNotesSummary', adminAuth.isValidAuthToken, appControllers.invoiceController.generateNotesSummary);
 
+// Explicit alias routes for clients list
+// GET (existing)
+router.get('/client/getclients', appControllers.clientController.list);
+
+// POST alias to work like "client/create" but for listing
+// Accepts pagination/search in req.body and forwards to the same list controller
+router.post('/client/getclients', (req, res, next) => {
+  const hasBody = req.body && Object.keys(req.body).length > 0;
+  if (!hasBody) {
+    // No body -> return ALL clients
+    return appControllers.clientController.listAll(req, res, next);
+  }
+  // Body present -> treat as paginated list with filters
+  req.query = { ...(req.query || {}), ...(req.body || {}) };
+  return appControllers.clientController.list(req, res, next);
+});
+
+// Optional: also allow POST on /client/list (same behavior)
+router.post('/client/list', (req, res, next) => {
+  const hasBody = req.body && Object.keys(req.body).length > 0;
+  if (!hasBody) {
+    return appControllers.clientController.listAll(req, res, next);
+  }
+  req.query = { ...(req.query || {}), ...(req.body || {}) };
+  return appControllers.clientController.list(req, res, next);
+});
+
 module.exports = router;
