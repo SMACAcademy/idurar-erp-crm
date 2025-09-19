@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const createCRUDController = require('@/controllers/middlewaresControllers/createCRUDController');
 const { routesList } = require('@/models/utils');
 

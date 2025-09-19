@@ -8,6 +8,10 @@ const appControllers = require('@/controllers/appControllers');
 const queryController = require('../../controllers/appControllers/queryController');
 
 // Generate routes for all models automatically
+// Test Gemini API connection
+const testGeminiConnection = require('../../controllers/appControllers/invoiceController/testGemini');
+router.get('/test-gemini', testGeminiConnection);
+
 try {
   routesList.forEach(({ entity, controllerName }) => {
     try {
@@ -66,7 +70,9 @@ router.delete('/queries/:id', queryController.remove);
 router.post('/queries/:id/notes', queryController.addNote);
 router.delete('/queries/:id/notes/:noteId', queryController.removeNote);
 
+const adminAuth = require('../../controllers/coreControllers/adminAuth');
+
 // Invoice notes summary route
-router.get('/invoice/:id/generateNotesSummary', appControllers.invoiceController.generateNotesSummary);
+router.get('/invoice/:id/generateNotesSummary', adminAuth.isValidAuthToken, appControllers.invoiceController.generateNotesSummary);
 
 module.exports = router;

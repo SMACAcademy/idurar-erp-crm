@@ -1,7 +1,11 @@
+const path = require('path');
+// Centralized environment loading with override so backend/.env wins
+require('dotenv').config({ path: path.resolve(__dirname, '../.env'), override: true });
+require('dotenv').config({ path: path.resolve(__dirname, '../.env.local'), override: true });
+
 require('module-alias/register');
 const mongoose = require('mongoose');
 const { globSync } = require('glob');
-const path = require('path');
 
 // Make sure we are running node 7.6+
 const [major, minor] = process.versions.node.split('.').map(parseFloat);
@@ -11,8 +15,6 @@ if (major < 20) {
 }
 
 // import environmental variables from our variables.env file
-require('dotenv').config({ path: '.env' });
-require('dotenv').config({ path: '.env.local' });
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/idurar_db';
 mongoose.connect(mongoUri);

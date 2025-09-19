@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.509.0",
+    "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
@@ -37,6 +38,7 @@
     "mongoose-autopopulate": "^1.1.0",
     "multer": "^1.4.4",
     "node-cache": "^5.1.2",
+    "node-fetch": "^2.7.0",
     "openai": "^4.27.0",
     "pug": "^3.0.2",
     "resend": "^2.0.0",

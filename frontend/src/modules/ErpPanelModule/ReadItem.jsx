@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Divider, message, Modal } from 'antd';
-
 import { Button, Row, Col, Descriptions, Statistic, Tag } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
+import { request } from '@/request';
+import axios from 'axios';
+import { API_BASE_URL } from '@/config/serverApiConfig';
 import {
   EditOutlined,
   FilePdfOutlined,
@@ -135,22 +137,18 @@ export default function ReadItem({ config, selectedItem }) {
   const handleGenerateSummary = async () => {
     setGeneratingSummary(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/${entity}/${currentErp._id}/generateNotesSummary`, {
-        method: 'GET',
+      const result = await axios.get(`${API_BASE_URL}invoice/${currentErp._id}/generateNotesSummary`, {
         headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include cookies for authentication
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem('auth'))?.current?.token}`
+        }
       });
 
-      const result = await response.json();
-
-      if (result.success) {
-        setSummary(result.data.summary);
+      if (result.data.success) {
+        setSummary(result.data.data.summary);
         setSummaryModalVisible(true);
         message.success('Summary generated successfully!');
       } else {
-        message.error(result.message || 'Failed to generate summary');
+        message.error(result.data.message || 'Failed to generate summary');
       }
     } catch (error) {
       console.error('Error generating summary:', error);
