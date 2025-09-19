@@ -69,12 +69,12 @@ Please provide an extensive and detailed summary of the following invoice item n
 ${itemNotes.join('\n')}
 
 
-Please create a thorough, professional summary that elaborates on each key point, provides additional context where relevant, includes detailed explanations of any implications, and offers actionable suggestions or recommendations derived from the notes to improve processes, address issues, or enhance outcomes.
-    `.trim();
+Please create a thorough, professional summary that captures all key points, includes relevant details from each note, and provides a cohesive overview of the information presented in the notes.    `.trim();
+
     console.log('Gemini key (masked):', maskKey(process.env.GEMINI_API_KEY));
 
     // Initialize Gemini model (configurable via GEMINI_MODEL, default: gemini-1.5-flash)
-    const modelName = (process.env.GEMINI_MODEL && String(process.env.GEMINI_MODEL).trim()) || 'gemini-1.5-flash';
+    const modelName = (process.env.GEMINI_MODEL && String(process.env.GEMINI_MODEL).trim()) || 'gemini-2.0-flash';
     const model = genAI.getGenerativeModel({ model: modelName });
     console.log('Model initialized:', modelName);
 
