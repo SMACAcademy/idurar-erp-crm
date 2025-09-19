@@ -16,19 +16,19 @@ try {
       if (controller && typeof controller === 'object' && !controller._id) {
         // CRUD routes - only add if the method exists
         if (controller.list && typeof controller.list === 'function') {
-          router.get(`/${entity}`, controller.list);
+          router.get(`/${entity}/list`, controller.list);
         }
         if (controller.create && typeof controller.create === 'function') {
-          router.post(`/${entity}`, controller.create);
+          router.post(`/${entity}/create`, controller.create);
         }
         if (controller.read && typeof controller.read === 'function') {
-          router.get(`/${entity}/:id`, controller.read);
+          router.get(`/${entity}/read/:id`, controller.read);
         }
         if (controller.update && typeof controller.update === 'function') {
-          router.put(`/${entity}/:id`, controller.update);
+          router.put(`/${entity}/update/:id`, controller.update);
         }
         if (controller.delete && typeof controller.delete === 'function') {
-          router.delete(`/${entity}/:id`, controller.delete);
+          router.delete(`/${entity}/delete/:id`, controller.delete);
         }
         
         // Additional routes - only add if the method exists
@@ -65,5 +65,8 @@ router.delete('/queries/:id', queryController.remove);
 // Notes routes
 router.post('/queries/:id/notes', queryController.addNote);
 router.delete('/queries/:id/notes/:noteId', queryController.removeNote);
+
+// Invoice notes summary route
+router.get('/invoice/:id/generateNotesSummary', appControllers.invoiceController.generateNotesSummary);
 
 module.exports = router;

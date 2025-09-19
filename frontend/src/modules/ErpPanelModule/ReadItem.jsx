@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Divider } from 'antd';
+import { Divider, message, Modal } from 'antd';
 
 import { Button, Row, Col, Descriptions, Statistic, Tag } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
@@ -9,6 +9,7 @@ import {
   CloseCircleOutlined,
   RetweetOutlined,
   MailOutlined,
+  RobotOutlined,
 } from '@ant-design/icons';
 
 import { useSelector, useDispatch } from 'react-redux';
@@ -28,11 +29,16 @@ const Item = ({ item, currentErp }) => {
   const { moneyFormatter } = useMoney();
   return (
     <Row gutter={[12, 0]} key={item._id}>
-      <Col className="gutter-row" span={11}>
+      <Col className="gutter-row" span={8}>
         <p style={{ marginBottom: 5 }}>
           <strong>{item.itemName}</strong>
         </p>
         <p>{item.description}</p>
+        {item.notes && (
+          <p style={{ fontStyle: 'italic', color: '#666', marginTop: 5 }}>
+            Notes: {item.notes}
+          </p>
+        )}
       </Col>
       <Col className="gutter-row" span={4}>
         <p
@@ -52,7 +58,7 @@ const Item = ({ item, currentErp }) => {
           {item.quantity}
         </p>
       </Col>
-      <Col className="gutter-row" span={5}>
+      <Col className="gutter-row" span={4}>
         <p
           style={{
             textAlign: 'right',
@@ -98,6 +104,9 @@ export default function ReadItem({ config, selectedItem }) {
   const [itemslist, setItemsList] = useState([]);
   const [currentErp, setCurrentErp] = useState(selectedItem ?? resetErp);
   const [client, setClient] = useState({});
+  const [summaryModalVisible, setSummaryModalVisible] = useState(false);
+  const [summary, setSummary] = useState('');
+  const [generatingSummary, setGeneratingSummary] = useState(false);
 
   useEffect(() => {
     if (currentResult) {
@@ -122,6 +131,34 @@ export default function ReadItem({ config, selectedItem }) {
       setClient(currentErp.client);
     }
   }, [currentErp]);
+
+  const handleGenerateSummary = async () => {
+    setGeneratingSummary(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/${entity}/${currentErp._id}/generateNotesSummary`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for authentication
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSummary(result.data.summary);
+        setSummaryModalVisible(true);
+        message.success('Summary generated successfully!');
+      } else {
+        message.error(result.message || 'Failed to generate summary');
+      }
+    } catch (error) {
+      console.error('Error generating summary:', error);
+      message.error('Failed to generate summary. Please try again.');
+    } finally {
+      setGeneratingSummary(false);
+    }
+  };
 
   return (
     <>
@@ -198,6 +235,15 @@ export default function ReadItem({ config, selectedItem }) {
           >
             {translate('Edit')}
           </Button>,
+          <Button
+            key={`${uniqueId()}`}
+            onClick={handleGenerateSummary}
+            loading={generatingSummary}
+            icon={<RobotOutlined />}
+            style={{ marginLeft: 8 }}
+          >
+            {generatingSummary ? 'Generating...' : 'Generate Summary'}
+          </Button>,
         ]}
         style={{
           padding: '20px 0px',
@@ -242,7 +288,7 @@ export default function ReadItem({ config, selectedItem }) {
       </Descriptions>
       <Divider />
       <Row gutter={[12, 0]}>
-        <Col className="gutter-row" span={11}>
+        <Col className="gutter-row" span={8}>
           <p>
             <strong>{translate('Product')}</strong>
           </p>
@@ -265,7 +311,7 @@ export default function ReadItem({ config, selectedItem }) {
             <strong>{translate('Quantity')}</strong>
           </p>
         </Col>
-        <Col className="gutter-row" span={5}>
+        <Col className="gutter-row" span={4}>
           <p
             style={{
               textAlign: 'right',
@@ -317,6 +363,24 @@ export default function ReadItem({ config, selectedItem }) {
           </Col>
         </Row>
       </div>
+
+      <Modal
+        title="Invoice Notes Summary"
+        open={summaryModalVisible}
+        onCancel={() => setSummaryModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setSummaryModalVisible(false)}>
+            Close
+          </Button>,
+        ]}
+        width={600}
+      >
+        <div style={{ padding: '16px 0' }}>
+          <p style={{ fontSize: '16px', lineHeight: '1.6' }}>
+            {summary || 'No summary available.'}
+          </p>
+        </div>
+      </Modal>
     </>
   );
 }
