@@ -12,7 +12,10 @@ const paginatedList = require('./paginatedList');
 const read = require('./read');
 const generateNotesSummary = require('./generateNotesSummary');
 
+// expose both "mail" and "sendInvoiceMail" for routing flexibility
 methods.mail = sendMail;
+methods.sendInvoiceMail = sendMail;
+
 methods.create = create;
 methods.update = update;
 methods.delete = remove;

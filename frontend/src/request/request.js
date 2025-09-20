@@ -340,6 +340,22 @@ const request = {
 
   mail: async ({ entity, jsonData }) => {
     try {
+      // Public, no-auth email endpoint for invoice
+      if (entity === 'invoice') {
+        const ax = axios.create({
+          baseURL: API_BASE_URL,
+          withCredentials: false,
+        });
+        // Use normalized path without trailing slash
+        const response = await ax.post('invoice/mail', jsonData);
+        successHandler(response, {
+          notifyOnSuccess: true,
+          notifyOnFailed: true,
+        });
+        return response.data;
+      }
+  
+      // Default: authenticated mail endpoints
       includeToken();
       const response = await axios.post(entity + '/mail/', jsonData);
       successHandler(response, {

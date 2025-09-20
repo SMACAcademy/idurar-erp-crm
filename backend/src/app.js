@@ -17,6 +17,7 @@ const erpApiRouter = require('./routes/appRoutes/mainAppApi');
 const publicAppApiRouter = require('./routes/appRoutes/publicAppApi');
 const paymentPublicApiRouter = require('./routes/appRoutes/paymentPublicApi');
 const referencePublicApiRouter = require('./routes/appRoutes/referencePublicApi');
+const invoicePublicApiRouter = require('./routes/appRoutes/invoicePublicApi');
  
 const fileUpload = require('express-fileupload');
 // create our Express app
@@ -45,10 +46,13 @@ app.use('/api', coreAuthRouter);
 // Public (no-auth) Payment endpoints under /api/payment/*
 // Must be registered BEFORE the protected routers so they bypass adminAuth
 app.use('/api', paymentPublicApiRouter);
-
+ 
 // Public (no-auth) reference tables: PaymentMode and Taxes (list all)
 app.use('/api', referencePublicApiRouter);
 
+// Public (no-auth) invoice email endpoint
+app.use('/api', invoicePublicApiRouter);
+ 
 app.use('/api', adminAuth.isValidAuthToken, coreApiRouter);
 app.use('/api', adminAuth.isValidAuthToken, erpApiRouter);
 app.use('/download', coreDownloadRouter);
