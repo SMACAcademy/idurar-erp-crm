@@ -1,63 +1,70 @@
-const paginatedList = async (Model, req, res) => {
-  const page = req.query.page || 1;
-  const limit = parseInt(req.query.items) || 10;
-  const skip = page * limit - limit;
+module.exports = (Model) => {
+  return async (req, res) => {
+    try {
+      const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+      const items =
+        Math.max(
+          parseInt(req.query.items, 10) ||
+            parseInt(req.query.limit, 10) || // backward compatibility
+            10,
+          1
+        );
+      const skip = (page - 1) * items;
 
-  const { sortBy = 'enabled', sortValue = -1, filter, equal } = req.query;
+      // Base criteria
+      const criteria = { removed: false };
 
-  const fieldsArray = req.query.fields ? req.query.fields.split(',') : [];
+      // Optional direct filters
+      if (typeof req.query.enabled !== 'undefined') {
+        const v = String(req.query.enabled).toLowerCase();
+        if (v === 'true' || v === 'false') criteria.enabled = v === 'true';
+      }
+      if (req.query.createdBy) criteria.createdBy = req.query.createdBy;
+      if (req.query.assigned) criteria.assigned = req.query.assigned;
+      if (req.query.email) criteria.email = req.query.email;
+      if (req.query.country) criteria.country = req.query.country;
 
-  let fields;
+      // Optional search (q + fields)
+      const { q, fields } = req.query;
+      if (q) {
+        const fieldsArray = (fields ? String(fields).split(',') : ['name', 'email', 'phone']).filter(Boolean);
+        criteria.$or = fieldsArray.map((f) => ({ [f.trim()]: { $regex: new RegExp(q, 'i') } }));
+      }
 
-  fields = fieldsArray.length === 0 ? {} : { $or: [] };
+      // Sorting options
+      const sortBy = req.query.sortBy || 'created';
+      const sortOrder = (req.query.sort || 'desc').toLowerCase() === 'asc' ? 1 : -1;
 
-  for (const field of fieldsArray) {
-    fields.$or.push({ [field]: { $regex: new RegExp(req.query.q, 'i') } });
-  }
+      const [results, total] = await Promise.all([
+        Model.find(criteria).sort({ [sortBy]: sortOrder }).skip(skip).limit(items).exec(),
+        Model.countDocuments(criteria),
+      ]);
 
-  //  Query the database for a list of all results
-  const resultsPromise = Model.find({
-    removed: false,
+      const totalPages = Math.max(Math.ceil(total / items), 1);
+      const hasNext = page < totalPages;
+      const hasPrev = page > 1;
 
-    [filter]: equal,
-    ...fields,
-  })
-    .skip(skip)
-    .limit(limit)
-    .sort({ [sortBy]: sortValue })
-    .populate()
-    .exec();
-
-  // Counting the total documents
-  const countPromise = Model.countDocuments({
-    removed: false,
-
-    [filter]: equal,
-    ...fields,
-  });
-  // Resolving both promises
-  const [result, count] = await Promise.all([resultsPromise, countPromise]);
-
-  // Calculating total pages
-  const pages = Math.ceil(count / limit);
-
-  // Getting Pagination Object
-  const pagination = { page, pages, count };
-  if (count > 0) {
-    return res.status(200).json({
-      success: true,
-      result,
-      pagination,
-      message: 'Successfully found all documents',
-    });
-  } else {
-    return res.status(203).json({
-      success: true,
-      result: [],
-      pagination,
-      message: 'Collection is Empty',
-    });
-  }
+      return res.status(200).json({
+        success: true,
+        result: results,
+        pagination: {
+          page,
+          items,
+          count: total,
+          totalPages,
+          hasNext,
+          hasPrev,
+          nextPage: hasNext ? page + 1 : null,
+          prevPage: hasPrev ? page - 1 : null,
+        },
+        message: 'Successfully found all documents',
+      });
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        result: null,
+        message: err.message,
+      });
+    }
+  };
 };
-
-module.exports = paginatedList;

@@ -1,0 +1,103 @@
+{
+  "info": {
+    "name": "IDURAR Clients API (Public, No Auth)",
+    "_postman_id": "e72b45de-6e3f-4c0c-8a7f-9f5e8b8b7f10",
+    "description": "Public endpoints for Clients listing without authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" }
+  ],
+  "item": [
+    {
+      "name": "Clients - GET /public-api/clients (paginated + filters)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/public-api/clients?items=10&page=1&sortBy=created&sort=desc&q=john&fields=name,email,phone&enabled=true",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "public-api", "clients" ],
+          "query": [
+            { "key": "items", "value": "10" },
+            { "key": "page", "value": "1" },
+            { "key": "sortBy", "value": "created" },
+            { "key": "sort", "value": "desc" },
+            { "key": "q", "value": "john" },
+            { "key": "fields", "value": "name,email,phone" },
+            { "key": "enabled", "value": "true" }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.code === 200);",
+              "const json = pm.response.json();",
+              "pm.test('success true', () => json.success === true);",
+              "pm.test('has pagination', () => json.pagination && typeof json.pagination.count === 'number');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clients - GET /public-api/clients/all (no pagination)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/public-api/clients/all?sortBy=created&sort=desc",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "public-api", "clients", "all" ],
+          "query": [
+            { "key": "sortBy", "value": "created" },
+            { "key": "sort", "value": "desc" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Alias - GET /public-api/client/list",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/public-api/client/list?items=5&page=1",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "public-api", "client", "list" ],
+          "query": [
+            { "key": "items", "value": "5" },
+            { "key": "page", "value": "1" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Alias - GET /public-api/client/list/all",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/public-api/client/list/all",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "public-api", "client", "list", "all" ]
+        }
+      }
+    },
+    {
+      "name": "Alias - GET /public-api/client/getclients",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/public-api/client/getclients?items=10&page=1",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "public-api", "client", "getclients" ],
+          "query": [
+            { "key": "items", "value": "10" },
+            { "key": "page", "value": "1" }
+          ]
+        }
+      }
+    }
+  ]
+}

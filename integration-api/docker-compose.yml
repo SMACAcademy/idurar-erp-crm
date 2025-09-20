@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  integration-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URI=mongodb://host.docker.internal:27017/idurar_db
+      - API_USERNAME=admin
+      - API_PASSWORD=securepassword123
+    env_file:
+      - .env
+    networks:
+      - integration-network
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: idurar_db
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - integration-network
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+
+networks:
+  integration-network:
+    driver: bridge

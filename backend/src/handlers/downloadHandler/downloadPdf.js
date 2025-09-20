@@ -20,20 +20,36 @@ module.exports = downloadPdf = async (req, res, { directory, id }) => {
       const fileId = modelName.toLowerCase() + '-' + result._id + '.pdf';
       const folderPath = modelName.toLowerCase();
       const targetLocation = `src/public/download/${folderPath}/${fileId}`;
+      console.log(`[download] starting PDF generation for ${modelName}, target: ${targetLocation}`);
       await custom.generatePdf(
         modelName,
         { filename: folderPath, format: 'A4', targetLocation },
         result,
         async () => {
-          return res.download(targetLocation, (error) => {
-            if (error)
-              return res.status(500).json({
-                success: false,
-                result: null,
-                message: "Couldn't find file",
-                error: error.message,
-              });
-          });
+          console.log(`[download] PDF generation callback called, checking file: ${targetLocation}`);
+          if (require('fs').existsSync(targetLocation)) {
+            console.log(`[download] file exists, initiating download`);
+            return res.download(targetLocation, (error) => {
+              if (error) {
+                console.error(`[download] res.download error:`, error);
+                return res.status(500).json({
+                  success: false,
+                  result: null,
+                  message: "Couldn't find file",
+                  error: error.message,
+                });
+              } else {
+                console.log(`[download] download completed successfully`);
+              }
+            });
+          } else {
+            console.error(`[download] file does not exist: ${targetLocation}`);
+            return res.status(500).json({
+              success: false,
+              result: null,
+              message: "PDF file was not generated",
+            });
+          }
         }
       );
     } else {

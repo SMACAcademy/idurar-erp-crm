@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "IDURAR Clients API",
+    "_postman_id": "b3a1f7f8-1d23-4a56-b789-1234567890ab",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth - Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/login",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "api", "login" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  const json = pm.response.json();",
+              "  if (json && json.result && json.result.token) {",
+              "    pm.collectionVariables.set('token', json.result.token);",
+              "  }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clients - GET /client/list",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/client/list?items=10&page=1&sortBy=created&sort=desc&enabled=true",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "api", "client", "list" ],
+          "query": [
+            { "key": "items", "value": "10" },
+            { "key": "page", "value": "1" },
+            { "key": "sortBy", "value": "created" },
+            { "key": "sort", "value": "desc" },
+            { "key": "enabled", "value": "true" }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('status 200', () => pm.response.code === 200);",
+              "const json = pm.response.json();",
+              "pm.test('has pagination', () => json.pagination && typeof json.pagination.count === 'number');"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Clients - GET /client/getclients",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/client/getclients?items=5&page=1",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "api", "client", "getclients" ],
+          "query": [
+            { "key": "items", "value": "5" },
+            { "key": "page", "value": "1" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Clients - POST /client/getclients (with body filters)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/client/getclients",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "api", "client", "getclients" ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": 10,\n  \"page\": 1,\n  \"q\": \"john\",\n  \"fields\": \"name,email,phone\",\n  \"sortBy\": \"created\",\n  \"sort\": \"desc\",\n  \"enabled\": true\n}"
+        }
+      }
+    },
+    {
+      "name": "Clients - GET /client/list/all",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/client/list/all",
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "api", "client", "list", "all" ]
+        }
+      }
+    }
+  ]
+}

@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '../../.env' });  // Loads .env from backend root
 require('dotenv').config({ path: '.env' });
 require('dotenv').config({ path: '.env.local' });
 const { globSync } = require('glob');
@@ -5,7 +6,8 @@ const fs = require('fs');
 const { generate: uniqueId } = require('shortid');
 
 const mongoose = require('mongoose');
-mongoose.connect(process.env.DATABASE);
+const databaseUri = process.env.DATABASE || 'mongodb://127.0.0.1:27017/idurar_db';
+mongoose.connect(databaseUri);
 
 async function setupApp() {
   try {

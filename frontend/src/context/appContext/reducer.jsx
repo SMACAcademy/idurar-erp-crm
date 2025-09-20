@@ -25,7 +25,7 @@ export function contextReducer(state, action) {
     case actionTypes.CHANGE_APP:
       return {
         ...state,
-        currentApp: action.playload,
+        currentApp: action.payload,
       };
     case actionTypes.DEFAULT_APP:
       return {
@@ -33,8 +33,7 @@ export function contextReducer(state, action) {
         currentApp: 'default',
       };
 
-    default: {
-      throw new Error(`Unhandled action type: ${action.type}`);
-    }
+    default:
+      return state;
   }
 }

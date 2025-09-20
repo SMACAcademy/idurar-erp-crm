@@ -15,7 +15,7 @@ const contextActions = (dispatch) => {
     },
     app: {
       open: (appName) => {
-        dispatch({ type: actionTypes.CHANGE_APP, playload: appName });
+        dispatch({ type: actionTypes.CHANGE_APP, payload: appName });
       },
       default: () => {
         dispatch({ type: actionTypes.DEFAULT_APP });

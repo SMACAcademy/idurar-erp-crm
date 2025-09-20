@@ -1,7 +1,11 @@
+const path = require('path');
+// Centralized environment loading with override so backend/.env wins
+require('dotenv').config({ path: path.resolve(__dirname, '../.env'), override: true });
+require('dotenv').config({ path: path.resolve(__dirname, '../.env.local'), override: true });
+
 require('module-alias/register');
 const mongoose = require('mongoose');
 const { globSync } = require('glob');
-const path = require('path');
 
 // Make sure we are running node 7.6+
 const [major, minor] = process.versions.node.split('.').map(parseFloat);
@@ -11,10 +15,9 @@ if (major < 20) {
 }
 
 // import environmental variables from our variables.env file
-require('dotenv').config({ path: '.env' });
-require('dotenv').config({ path: '.env.local' });
 
-mongoose.connect(process.env.DATABASE);
+const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/idurar_db';
+mongoose.connect(mongoUri);
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -23,6 +26,9 @@ mongoose.connection.on('error', (error) => {
     `1. 🔥 Common Error caused issue → : check your .env file first and add your mongodb url`
   );
   console.error(`2. 🚫 Error → : ${error.message}`);
+});
+mongoose.connection.once('open', () => {
+  console.log('✅ MongoDB connection established successfully!');
 });
 
 const modelsFiles = globSync('./src/models/**/*.js');
@@ -37,3 +43,4 @@ app.set('port', process.env.PORT || 8888);
 const server = app.listen(app.get('port'), () => {
   console.log(`Express running → On PORT : ${server.address().port}`);
 });
+ 

@@ -69,7 +69,13 @@ export default function ReadItem({ config, selectedItem }) {
       setClient(currentErp.client);
     }
   }, [currentErp]);
-
+ 
+  const handleDownloadPdf = () => {
+    if (!currentErp?._id) return;
+    const url = `${DOWNLOAD_BASE_URL}${entity}/${entity}-${currentErp._id}.pdf`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+ 
   return (
     <>
       <PageHeader
@@ -91,12 +97,11 @@ export default function ReadItem({ config, selectedItem }) {
           </Button>,
           <Button
             key={`${uniqueId()}`}
-            onClick={() => {
-              window.open(
-                `${DOWNLOAD_BASE_URL}${entity}/${entity}-${currentErp._id}.pdf`,
-                '_blank'
-              );
-            }}
+            id="download-pdf-btn"
+            data-testid="download-pdf-btn"
+            data-cy="download-pdf-btn"
+            aria-label="Download PDF"
+            onClick={handleDownloadPdf}
             icon={<FilePdfOutlined />}
           >
             {translate('Download PDF')}

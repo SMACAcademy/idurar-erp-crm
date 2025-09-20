@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const Model = mongoose.model('Payment');
 const Invoice = mongoose.model('Invoice');
+const Admin = mongoose.model('Admin');
 const custom = require('@/controllers/pdfController');
 
 const { calculate } = require('@/helpers');
@@ -36,7 +37,21 @@ const create = async (req, res) => {
       message: `The Max Amount you can add is ${maxAmount}`,
     });
   }
-  req.body['createdBy'] = req.admin._id;
+  // Determine createdBy without requiring auth
+  let createdBy = req.admin && req.admin._id ? req.admin._id : req.body.createdBy;
+  if (!createdBy) {
+    const defaultAdmin = await Admin.findOne({ removed: false }).select('_id').lean();
+    if (defaultAdmin && defaultAdmin._id) {
+      createdBy = defaultAdmin._id;
+    } else {
+      return res.status(422).json({
+        success: false,
+        result: null,
+        message: 'createdBy is required. Provide a valid Admin _id in body or enable auth.',
+      });
+    }
+  }
+  req.body['createdBy'] = createdBy;
 
   const result = await Model.create(req.body);
 
