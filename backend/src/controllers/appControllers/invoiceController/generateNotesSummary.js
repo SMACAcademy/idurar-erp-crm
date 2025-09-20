@@ -65,7 +65,7 @@ const generateNotesSummary = async (req, res) => {
 
     // Prepare the prompt for AI
     const prompt = `
-Please provide an extensive and detailed summary of the following invoice item notes, including comprehensive coverage of all points, in-depth analysis, and practical suggestions based on the content:
+Summarize the following invoice item notes in approximately 10 lines, capturing all key points and providing a cohesive overview:
 ${itemNotes.join('\n')}
 
 
