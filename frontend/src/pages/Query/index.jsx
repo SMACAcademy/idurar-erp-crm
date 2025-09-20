@@ -48,15 +48,18 @@ const QueryPage = () => {
   const [form] = Form.useForm();
   const [noteForm] = Form.useForm();
 
-  // const fetchClients = async () => {
-  //   try {
-  //     const response = await axios.get('/client'); // Adjust endpoint if needed
-  //     setClients(response.data.result || []);
-  //   } catch (error) {
-  //     message.error('Failed to fetch clients');
-  //     console.error('Error fetching clients:', error);
-  //   }
-  // };
+  const fetchClients = async () => {
+    try {
+      // Use POST alias to get all clients when body is empty
+      const response = await axios.post('/client/getclients', {});
+      const list =
+        (response.data && (response.data.result || response.data.data || response.data.items)) || [];
+      setClients(Array.isArray(list) ? list : []);
+    } catch (error) {
+      message.error('Failed to fetch clients');
+      console.error('Error fetching clients:', error);
+    }
+  };
 
   const fetchQueries = async (page = 1, limit = 10, status = statusFilter) => {
     setLoading(true);
@@ -78,10 +81,10 @@ const QueryPage = () => {
     }
   };
 
-  // useEffect(() => {
-  //   fetchClients();
-  //   fetchQueries();
-  // }, []);
+  useEffect(() => {
+    // Load clients on mount; queries are handled by the statusFilter effect
+    fetchClients();
+  }, []);
 
   useEffect(() => {
     fetchQueries(1, pagination.pageSize, statusFilter);
@@ -153,8 +156,10 @@ const QueryPage = () => {
     }
   };
 
-  const openCreateModal = () => {
+  const openCreateModal = async () => {
     setSelectedQuery(null);
+    // Refresh clients before opening the modal (in case new clients were added)
+    await fetchClients();
     setIsModalVisible(true);
     form.resetFields();
   };
@@ -333,9 +338,10 @@ const QueryPage = () => {
               placeholder="Select a customer"
               showSearch
               optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
+              filterOption={(input, option) => {
+                const label = String(option?.children ?? '').toLowerCase();
+                return label.includes(input.toLowerCase());
+              }}
             >
               {clients.map(client => (
                 <Select.Option key={client._id} value={client._id}>
