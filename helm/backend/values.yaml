@@ -1,0 +1,48 @@
+replicaCount: 2
+
+image:
+  repository: ""
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 5000
+  targetPort: 5000
+
+istio:
+  enabled: false
+  virtualService:
+    hosts:
+    - "idurar.example.com"
+    gateways:
+    - idurar-gateway
+
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+env:
+  NODE_ENV: production
+  DATABASE_URL: ""
+
+serviceAccount:
+  create: true
+
+cloudwatch:
+  enabled: false
+  logGroup: "/idurar-app/backend"
+  region: ap-south-1

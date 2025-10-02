@@ -1,0 +1,392 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  pgType    PgType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  resolvedEnquiries Enquiry[] // Enquiries resolved by this admin
+  expenses          Expense[] // Expenses created by this admin
+}
+
+model Enquiry {
+  id         String        @id @default(cuid())
+  name       String
+  phone      String
+  message    String        @db.Text
+  status     EnquiryStatus @default(NOT_RESOLVED)
+  resolvedBy String? // Admin ID who resolved the enquiry
+  resolvedAt DateTime? // When the enquiry was resolved
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  resolver Admin? @relation(fields: [resolvedBy], references: [id])
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model PG {
+  id              String           @id @default(cuid())
+  name            String
+  type            PgType
+  location        String
+  rooms           Room[]
+  members         Member[]
+  payments        Payment[]
+  leavingRequests LeavingRequest[]
+  expenses        Expense[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Room {
+  id                String           @id @default(cuid())
+  roomNo            String
+  rent              Float
+  electricityCharge Float
+  capacity          Int
+  members           Member[]
+  leavingRequests   LeavingRequest[]
+  PG                PG?              @relation(fields: [pGId], references: [id])
+  pGId              String?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  @@unique([roomNo, pGId])
+}
+
+model Member {
+  id       String   @id @default(cuid())
+  memberId String   @unique // auto generated unique member ID
+  name     String
+  dob      DateTime
+  gender   Gender
+  location String
+  email    String   @unique
+  password String?
+  phone    String   @unique
+  work     String
+
+  photoUrl         String?
+  documentUrl      String?
+  digitalSignature String?
+
+  rentType      RentType
+  advanceAmount Float
+  pricePerDay   Float?
+  pgType        PgType
+  pgId          String
+  pg            PG       @relation(fields: [pgId], references: [id], onDelete: Cascade)
+  roomId        String?
+  room          Room?    @relation(fields: [roomId], references: [id], onDelete: SetNull)
+
+  dateOfJoining   DateTime  @default(now())
+  dateOfRelieving DateTime?
+
+  payment         Payment[]
+  leavingRequests LeavingRequest[]
+  OTP             OTP[]
+
+  isActive         Boolean @default(true)
+  isFirstTimeLogin Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OTP {
+  id        String    @id @default(cuid())
+  memberId  String // Make it required for member OTPs
+  member    Member    @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  email     String
+  code      String // Hashed OTP code
+  type      OTPType   @default(PASSWORD_RESET)
+  used      Boolean   @default(false) // Prevent reuse
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  usedAt    DateTime?
+
+  @@index([memberId])
+  @@index([email])
+  @@index([expiresAt])
+  @@index([used])
+}
+
+model RegisteredMember {
+  id              String    @id @default(cuid())
+  name            String
+  dob             DateTime
+  gender          Gender
+  location        String
+  pgLocation      String
+  email           String    @unique
+  phone           String    @unique
+  work            String
+  photoUrl        String?
+  documentUrl     String?
+  rentType        RentType
+  pgType          PgType
+  dateOfRelieving DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model LeavingRequest {
+  id                 String               @id @default(cuid())
+  memberId           String
+  member             Member               @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  pgId               String
+  pg                 PG                   @relation(fields: [pgId], references: [id], onDelete: Cascade)
+  roomId             String?
+  room               Room?                @relation(fields: [roomId], references: [id], onDelete: SetNull)
+  requestedLeaveDate DateTime // When the member wants to leave
+  reason             String               @db.Text // Reason for leaving
+  feedback           String?              @db.Text // Optional feedback about PG
+  status             LeavingRequestStatus @default(PENDING)
+  approvedBy         String? // Admin ID who approved/rejected
+  approvedAt         DateTime? // When the request was processed
+  pendingDues        Float? // Any pending dues to be settled
+  finalAmount        Float? // Final settlement amount
+  settledDate        DateTime? // When final settlement was done
+  settlementProof    String? // URL of settlement proof document
+  paymentMethod      PaymentMethod?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  @@index([memberId])
+  @@index([pgId])
+  @@index([status])
+  @@index([requestedLeaveDate])
+}
+
+model Payment {
+  id       String @id @default(cuid())
+  memberId String
+  member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  pgId String
+  pg   PG     @relation(fields: [pgId], references: [id], onDelete: Cascade)
+
+  month                     Int
+  year                      Int
+  amount                    Float
+  dueDate                   DateTime
+  overdueDate               DateTime
+  rentBillScreenshot        String?
+  electricityBillScreenshot String?
+  paidDate                  DateTime?
+  paymentMethod             PaymentMethod?
+
+  attemptNumber  Int            @default(1)
+  paymentStatus  PaymentStatus  @default(PENDING)
+  approvalStatus ApprovalStatus @default(PENDING)
+  approvedBy     String? // Admin ID
+  approvedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([memberId, month, year, attemptNumber])
+  @@index([pgId, month, year])
+  @@index([memberId, month, year])
+}
+
+model PaymentStats {
+  id                           String   @id @default(cuid())
+  month                        Int
+  year                         Int
+  pgType                       PgType
+  totalPendingPayments         Int
+  totalAmountPending           Int
+  totalOverduePayments         Int
+  thisMonthPendingPaymentCount Int
+  createdAt                    DateTime @default(now())
+  updatedAt                    DateTime @updatedAt
+
+  @@unique([pgType, month, year])
+}
+
+model Expense {
+  id            String        @id @default(cuid())
+  entryType     EntryType
+  amount        Float
+  date          DateTime
+  partyName     String
+  paymentType   PaymentMethod
+  remarks       String?       @db.Text
+  attachedBill1 String? // URL to first attached file
+  attachedBill2 String? // URL to second attached file  
+  attachedBill3 String? // URL to third attached file
+
+  // Admin who created this expense record
+  createdBy String
+  admin     Admin  @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  // PG association
+  pgId String
+  pg   PG     @relation(fields: [pgId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pgId])
+  @@index([createdBy])
+  @@index([date])
+  @@index([entryType])
+}
+
+model ExpenseStats {
+  id     String @id @default(cuid())
+  month  Int // 1-12
+  year   Int // e.g., 2025
+  pgType PgType // MENS or WOMENS
+
+  // Cash In Stats
+  totalCashInAmount Float @default(0)
+  totalCashInCount  Int   @default(0)
+
+  // Cash Out Stats  
+  totalCashOutAmount Float @default(0)
+  totalCashOutCount  Int   @default(0)
+
+  // Net amount (Cash In - Cash Out)
+  netAmount Float @default(0)
+
+  // Payment method breakdown for cash out
+  cashOutOnline Float @default(0)
+  cashOutCash   Float @default(0)
+
+  // Payment method breakdown for cash in
+  cashInOnline Float @default(0)
+  cashInCash   Float @default(0)
+
+  // Trend comparison fields (vs previous month)
+  cashInPercentChange  Float    @default(0) // Percentage change from previous month
+  cashOutPercentChange Float    @default(0) // Percentage change from previous month
+  netPercentChange     Float    @default(0) // Net amount percentage change
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@unique([pgType, month, year])
+  @@index([pgType])
+  @@index([month, year])
+}
+
+model Report {
+  id          String     @id @default(cuid())
+  pgType      PgType
+  year        Int
+  reportType  ReportType
+  period      Int
+  periodStart DateTime
+  periodEnd   DateTime
+
+  //Cards data
+  newMembers             Int
+  newMembersTrendPercent Float
+
+  rentCollected             Float
+  rentCollectedTrendPercent Float
+
+  memberDepartures             Int
+  memberDeparturesTrendPercent Float
+
+  totalExpenses             Float
+  totalExpensesTrendPercent Float
+
+  netProfit             Float
+  netProfitTrendPercent Float
+
+  // Table data as JSON
+  pgPerformanceData    Json
+  roomUtilizationData  Json
+  paymentAnalyticsData Json
+  financialSummaryData Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([pgType, reportType, period, year])
+  @@index([reportType, year, period])
+  @@index([createdAt])
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}
+
+enum RegistrationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  APPROVED
+  REJECTED
+  OVERDUE
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum RentType {
+  LONG_TERM
+  SHORT_TERM
+}
+
+enum PgType {
+  WOMENS
+  MENS
+}
+
+enum EnquiryStatus {
+  NOT_RESOLVED
+  RESOLVED
+}
+
+enum PaymentMethod {
+  ONLINE
+  CASH
+}
+
+enum LeavingRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum OTPType {
+  PASSWORD_RESET
+  INITIAL_SETUP
+}
+
+enum EntryType {
+  CASH_IN
+  CASH_OUT
+}
+
+enum ReportType {
+  WEEKLY
+  MONTHLY
+}

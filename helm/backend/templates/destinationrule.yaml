@@ -1,0 +1,16 @@
+{{- if .Values.istio.enabled }}
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  host: {{ .Chart.Name }}
+  trafficPolicy:
+    loadBalancer:
+      simple: LEAST_CONN
+  subsets:
+  - name: v1
+    labels:
+      version: {{ .Chart.AppVersion }}
+{{- end }}

@@ -1,0 +1,6 @@
+apiVersion: v2
+name: backend
+description: Idurar ERP CRM Backend
+type: application
+version: 0.1.0
+appVersion: "4.1.0"

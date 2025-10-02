@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import "tailwindcss";
+*{
+   font-family: "Outfit", sans-serif;
+}
+@theme{
+   --color-primary:#e23b47;
+   --color-secondary:#e5535d;
+}
+@layer utilities {
+  /* Chrome, Safari, Edge */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    @apply appearance-none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
